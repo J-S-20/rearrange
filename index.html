@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentence Ordering Exercise</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .container {
+            margin-top: 30px;
+        }
+        .sentence-container {
+            background-color: #f5f5f5;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .sentence {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px 15px;
+            margin: 8px 0;
+            cursor: grab;
+            transition: all 0.2s;
+        }
+        .sentence:hover {
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .sentence.dragging {
+            opacity: 0.5;
+        }
+        .sentence.correct {
+            border-left: 4px solid #2ecc71;
+        }
+        .sentence.incorrect {
+            border-left: 4px solid #e74c3c;
+        }
+        .locked .sentence {
+            cursor: not-allowed;
+            opacity: 0.9;
+        }
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            margin: 0 5px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        button:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        #check-btn {
+            background-color: #2ecc71;
+        }
+        #check-btn:hover {
+            background-color: #27ae60;
+        }
+        #check-btn:disabled {
+            background-color: #95a5a6;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            display: none;
+        }
+        .correct-result {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .partial-result {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        .incorrect-result {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .examples-row {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        .example-btn {
+            margin: 0 5px 10px;
+            background-color: #f39c12;
+        }
+        .example-btn:hover {
+            background-color: #d35400;
+        }
+        .example-btn.active {
+            background-color: #d35400;
+            box-shadow: 0 0 5px rgba(0,0,0,0.3);
+        }
+        .score-display {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+        .progress-container {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 20px;
+            background-color: #3498db;
+            text-align: center;
+            line-height: 20px;
+            color: white;
+            transition: width 0.5s;
+        }
+        .instructions {
+            background-color: #e8f4f8;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #3498db;
+        }
+        .attempt-info {
+            text-align: center;
+            margin-top: 15px;
+            font-style: italic;
+            color: #7f8c8d;
+        }
+        .current-example {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            font-size: 18px;
+        }
+        /* New Styles for Login/Signup */
+        .auth-container {
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .auth-toggle {
+            text-align: center;
+            margin-top: 15px;
+            color: #3498db;
+            cursor: pointer;
+        }
+        .auth-toggle:hover {
+            text-decoration: underline;
+        }
+        .user-info {
+            text-align: right;
+            margin-bottom: 10px;
+        }
+        .logout-btn {
+            background-color: #e74c3c;
+            font-size: 14px;
+            padding: 5px 10px;
+        }
+        .logout-btn:hover {
+            background-color: #c0392b;
+        }
+        /* Timer Styles */
+        .timer-container {
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            margin: 15px 0;
+            color: #2c3e50;
+        }
+        .timer-warning {
+            color: #e74c3c;
+        }
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 400px;
+            width: 100%;
+        }
+        .modal h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+        .hidden {
+            display: none !important;
+        }
+
+        #next-btn {
+        background-color: #9b59b6;
+    }
+    #next-btn:hover {
+        background-color: #8e44ad;
+    }
+    #next-btn:disabled {
+        background-color: #95a5a6;
+        cursor: not-allowed;
+    }
+    </style>
+</head>
+<body>
+    <!-- Authentication Views -->
+    <div id="auth-view">
+        <h1>Sentence Ordering Exercise</h1>
+        
+        <div class="auth-container" id="login-container">
+            <h2>Login</h2>
+            <form class="auth-form" id="login-form">
+                <div class="form-group">
+                    <label for="login-username">Username</label>
+                    <input type="text" id="login-username" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" required>
+                </div>
+                <button type="submit">Login</button>
+            </form>
+            <div class="auth-toggle" id="signup-toggle">Don't have an account? Sign up</div>
+        </div>
+        
+        <div class="auth-container hidden" id="signup-container">
+            <h2>Sign Up</h2>
+            <form class="auth-form" id="signup-form">
+                <div class="form-group">
+                    <label for="signup-username">Username</label>
+                    <input type="text" id="signup-username" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-email">Email</label>
+                    <input type="email" id="signup-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-password">Password</label>
+                    <input type="password" id="signup-password" required>
+                </div>
+                <button type="submit">Sign Up</button>
+            </form>
+            <div class="auth-toggle" id="login-toggle">Already have an account? Login</div>
+        </div>
+    </div>
+    
+    <!-- Main Application View (hidden initially) -->
+    <div id="app-view" class="hidden">
+        <h1>Sentence Ordering Exercise</h1>
+        
+        <div class="user-info">
+            <span id="current-user">Welcome, User!</span>
+            <button id="logout-btn" class="logout-btn">Logout</button>
+        </div>
+        
+        <div class="container">
+            <div class="instructions">
+                <p><strong>Instructions:</strong> Drag and drop the sentences into the correct order. You can check your answer only once per attempt. You have 1 minute and 30 seconds to complete each exercise.</p>
+            </div>
+            
+            <div class="timer-container" id="timer-container">
+                Time remaining: <span id="timer">1:30</span>
+            </div>
+            
+            <div class="examples-row" id="examples-row">
+                <!-- Example buttons will be added here -->
+            </div>
+            
+            <div class="current-example" id="current-example">
+                Current Example: A Day at the Beach
+            </div>
+            
+            <div class="sentence-container" id="sentences">
+                <!-- Sentences will be added here -->
+            </div>
+            
+            <div class="score-display" id="score-display" style="display: none;">
+                <div id="points-text">Score: 0/5 points</div>
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress-bar" style="width: 0%">0%</div>
+                </div>
+            </div>
+            
+            <div class="attempt-info" id="attempt-info" style="display: none;">
+                You've used your one check for this attempt. Reset or select a new example to try again.
+            </div>
+            
+            <div class="controls">
+                <button id="reset-btn">Reset Order</button>
+                <button id="check-btn">Check Answer</button>
+                <button id="next-btn" disabled>Next Question</button>
+            </div>
+            
+            <div id="result"></div>
+        </div>
+    </div>
+    
+    <!-- Password Modal -->
+    <div id="password-modal" class="modal-overlay hidden">
+        <div class="modal">
+            <h3>Enter Password to Reset</h3>
+            <div class="form-group">
+                <input type="password" id="reset-password" placeholder="Enter password">
+            </div>
+            <div class="modal-footer">
+                <button id="cancel-reset">Cancel</button>
+                <button id="confirm-reset">Reset</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Time's Up Modal -->
+    <div id="times-up-modal" class="modal-overlay hidden">
+        <div class="modal">
+            <h3>Time's Up!</h3>
+            <p>You've run out of time for this exercise.</p>
+            <div class="modal-footer">
+                <button id="time-up-ok">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Define examples with correct order
+        const examples = {
+            story1: {
+                title: "A Day at the Beach",
+                sentences: [
+                    "We packed our beach bags with towels, sunscreen, and snacks.",
+                    "When we arrived, we set up our umbrella and blankets on the sand.",
+                    "The children immediately ran to the water and started splashing around.",
+                    "After swimming, we had a delicious picnic lunch together.",
+                    "As the sun began to set, we packed up and headed home."
+                ]
+            },
+            story2: {
+                title: "Making a Sandwich",
+                sentences: [
+                    "First, I gathered two slices of bread, cheese, lettuce, and tomato.",
+                    "Then, I spread mayonnaise on one slice of bread and mustard on the other.",
+                    "Next, I layered the cheese, lettuce, and tomato between the bread slices.",
+                    "After that, I cut the sandwich in half diagonally.",
+                    "Finally, I placed it on a plate and enjoyed my lunch."
+                ]
+            },
+            story3: {
+                title: "The Science Experiment",
+                sentences: [
+                    "The students gathered all the necessary materials for the experiment.",
+                    "The teacher carefully explained the safety procedures before they began.",
+                    "Each group followed the steps in the laboratory manual.",
+                    "They recorded their observations in their notebooks.",
+                    "At the end, they discussed their results and what they had learned."
+                ]
+            },
+            // New added stories (questions)
+            story4: {
+                title: "Planting a Garden",
+                sentences: [
+                    "First, we selected a sunny spot in the yard and cleared away the weeds.",
+                    "Then, we dug small holes in the soil, spacing them appropriately.",
+                    "Next, we carefully placed the seedlings in each hole and covered their roots.",
+                    "After planting, we watered everything thoroughly.",
+                    "Finally, we added mulch around the plants to retain moisture."
+                ]
+            },
+            story5: {
+                title: "Building a Treehouse",
+                sentences: [
+                    "We began by selecting a sturdy tree with thick branches.",
+                    "Next, we designed a simple floor plan and gathered the necessary materials.",
+                    "Then, we constructed the frame and secured it to the tree.",
+                    "After that, we added the floor, walls, and a small roof.",
+                    "Finally, we painted it and added a ladder for easy access."
+                ]
+            }
+
+            
+        };
+
+        // User data storage (simulating a database)
+        const users = {};
+        const RESET_PASSWORD = "87654321"; // Password for resetting
+
+        let currentExample = "story1";
+        let correctOrder = [...examples[currentExample].sentences];
+        let hasCheckedAnswer = false;
+        let currentUser = null;
+        let timerInterval = null;
+        let timeRemaining = 90; // 1 minute and 30 seconds
+        
+        // DOM elements
+        const authView = document.getElementById("auth-view");
+const appView = document.getElementById("app-view");
+const loginContainer = document.getElementById("login-container");
+const signupContainer = document.getElementById("signup-container");
+const loginForm = document.getElementById("login-form");
+const signupForm = document.getElementById("signup-form");
+const loginToggle = document.getElementById("login-toggle");
+const signupToggle = document.getElementById("signup-toggle");
+const currentUserSpan = document.getElementById("current-user");
+const logoutBtn = document.getElementById("logout-btn");
+const passwordModal = document.getElementById("password-modal");
+const cancelResetBtn = document.getElementById("cancel-reset");
+const confirmResetBtn = document.getElementById("confirm-reset");
+const resetPasswordInput = document.getElementById("reset-password");
+const timesUpModal = document.getElementById("times-up-modal");
+const timeUpOkBtn = document.getElementById("time-up-ok");
+
+const sentencesContainer = document.getElementById("sentences");
+const checkButton = document.getElementById("check-btn");
+const resetButton = document.getElementById("reset-btn");
+const resultDiv = document.getElementById("result");
+const scoreDisplay = document.getElementById("score-display");
+const pointsText = document.getElementById("points-text");
+const progressBar = document.getElementById("progress-bar");
+const attemptInfo = document.getElementById("attempt-info");
+const examplesRow = document.getElementById("examples-row");
+const currentExampleTitle = document.getElementById("current-example");
+const timerContainer = document.getElementById("timer-container");
+const timerSpan = document.getElementById("timer");
+const nextButton = document.getElementById("next-btn");
+
+nextButton.addEventListener("click", () => {
+    // Get the current example key
+    const currentExampleIndex = Object.keys(examples).indexOf(currentExample);
+    const exampleKeys = Object.keys(examples);
+    
+    // Determine the next example (with circular navigation)
+    const nextExampleIndex = (currentExampleIndex + 1) % exampleKeys.length;
+    const nextExampleKey = exampleKeys[nextExampleIndex];
+    
+    // Load the next example
+    loadExample(nextExampleKey);
+    
+    // Update active button in examples row
+    document.querySelectorAll(".example-btn").forEach(btn => {
+        btn.classList.remove("active");
+    });
+    document.querySelectorAll(".example-btn")[nextExampleIndex].classList.add("active");
+});
+        
+        // Authentication Toggle
+        loginToggle.addEventListener("click", () => {
+            loginContainer.classList.add("hidden");
+            signupContainer.classList.remove("hidden");
+        });
+        
+        signupToggle.addEventListener("click", () => {
+            signupContainer.classList.add("hidden");
+            loginContainer.classList.remove("hidden");
+        });
+        
+        // Sign Up Handler
+        signupForm.addEventListener("submit", function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById("signup-username").value;
+            const email = document.getElementById("signup-email").value;
+            const password = document.getElementById("signup-password").value;
+            
+            // Check if username already exists
+            if (users[username]) {
+                alert("Username already exists. Please choose a different one.");
+                return;
+            }
+            
+            // Store new user
+            users[username] = {
+                email: email,
+                password: password
+            };
+            
+            alert("Account created successfully. Please log in.");
+            
+            // Clear form and show login
+            document.getElementById("signup-username").value = "";
+            document.getElementById("signup-email").value = "";
+            document.getElementById("signup-password").value = "";
+            signupContainer.classList.add("hidden");
+            loginContainer.classList.remove("hidden");
+        });
+        
+        // Login Handler
+        loginForm.addEventListener("submit", function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById("login-username").value;
+            const password = document.getElementById("login-password").value;
+            
+            // Simple check for demo purposes
+            if (users[username] && users[username].password === password) {
+                // Login successful
+                currentUser = username;
+                
+                // Update UI
+                currentUserSpan.textContent = `Welcome, ${currentUser}!`;
+                
+                // Show app view
+                authView.classList.add("hidden");
+                appView.classList.remove("hidden");
+                
+                // Initialize app
+                createExampleButtons();
+                loadExample(currentExample);
+                
+                // Clear login form
+                document.getElementById("login-username").value = "";
+                document.getElementById("login-password").value = "";
+            } else {
+                // For demo purposes, allow login with any credentials
+                currentUser = username;
+                
+                // Update UI
+                currentUserSpan.textContent = `Welcome, ${currentUser}!`;
+                
+                // Show app view
+                authView.classList.add("hidden");
+                appView.classList.remove("hidden");
+                
+                // Initialize app
+                createExampleButtons();
+                loadExample(currentExample);
+                
+                // Clear login form
+                document.getElementById("login-username").value = "";
+                document.getElementById("login-password").value = "";
+            }
+        });
+        
+        // Logout Handler
+        logoutBtn.addEventListener("click", function() {
+            // Clear current user
+            currentUser = null;
+            
+            // Stop timer if running
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+            
+            // Show auth view
+            appView.classList.add("hidden");
+            authView.classList.remove("hidden");
+            loginContainer.classList.remove("hidden");
+            signupContainer.classList.add("hidden");
+        });
+        
+        // Timer functions
+        function startTimer() {
+            // Clear any existing timer
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+            
+            // Reset time
+            timeRemaining = 90; // 1:30 minutes
+            updateTimerDisplay();
+            
+            // Start new timer
+            timerInterval = setInterval(function() {
+                timeRemaining--;
+                updateTimerDisplay();
+                
+                if (timeRemaining <= 30) {
+                    timerSpan.classList.add("timer-warning");
+                } else {
+                    timerSpan.classList.remove("timer-warning");
+                }
+                
+                if (timeRemaining <= 0) {
+                    // Time's up
+                    clearInterval(timerInterval);
+                    timesUpModal.classList.remove("hidden");
+                    
+                    // Lock the exercise
+                    hasCheckedAnswer = true;
+                    checkButton.disabled = true;
+                    sentencesContainer.classList.add("locked");
+                }
+            }, 1000);
+        }
+        
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            timerSpan.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        // Time's up modal handler
+        timeUpOkBtn.addEventListener("click", function() {
+            timesUpModal.classList.add("hidden");
+            attemptInfo.style.display = "block";
+        });
+        
+        // Create example buttons
+        function createExampleButtons() {
+            examplesRow.innerHTML = "";
+            
+            Object.keys(examples).forEach(key => {
+                const button = document.createElement("button");
+                button.classList.add("example-btn");
+                if (key === currentExample) {
+                    button.classList.add("active");
+                }
+                button.textContent = examples[key].title;
+                button.addEventListener("click", () => {
+                    if (key !== currentExample) {
+                        loadExample(key);
+                        
+                        // Update active button
+                        document.querySelectorAll(".example-btn").forEach(btn => {
+                            btn.classList.remove("active");
+                        });
+                        button.classList.add("active");
+                    }
+                });
+                examplesRow.appendChild(button);
+            });
+        }
+        
+        // Load selected example
+        function loadExample(exampleKey) {
+            currentExample = exampleKey;
+            correctOrder = [...examples[exampleKey].sentences];
+            hasCheckedAnswer = false;
+            
+            // Update example title
+            currentExampleTitle.textContent = `Current Example: ${examples[exampleKey].title}`;
+            
+            // Clear current sentences
+            sentencesContainer.innerHTML = "";
+            sentencesContainer.classList.remove("locked");
+            
+            // Create shuffled array
+            let shuffled = [...correctOrder];
+            shuffleArray(shuffled);
+            
+            // Add sentences to container
+            shuffled.forEach(sentence => {
+                const sentenceElement = document.createElement("div");
+                sentenceElement.classList.add("sentence");
+                sentenceElement.textContent = sentence;
+                sentenceElement.draggable = true;
+                sentencesContainer.appendChild(sentenceElement);
+                
+                // Add drag events
+                sentenceElement.addEventListener("dragstart", dragStart);
+                sentenceElement.addEventListener("dragover", dragOver);
+                sentenceElement.addEventListener("dragenter", dragEnter);
+                sentenceElement.addEventListener("dragleave", dragLeave);
+                sentenceElement.addEventListener("drop", drop);
+                sentenceElement.addEventListener("dragend", dragEnd);
+            });
+            
+            // Reset UI elements
+            resultDiv.style.display = "none";
+            scoreDisplay.style.display = "none";
+            attemptInfo.style.display = "none";
+            checkButton.disabled = false;
+            
+            // Reset sentence styling
+            const allSentences = document.querySelectorAll(".sentence");
+            allSentences.forEach(sentence => {
+                sentence.classList.remove("correct", "incorrect");
+            });
+            
+            // Start timer
+            startTimer();
+        }
+        
+        // Shuffle array (Fisher-Yates algorithm)
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+        
+        // Dragging functionality
+        let draggedItem = null;
+        
+        function dragStart() {
+            // Only allow dragging if not locked
+            if (sentencesContainer.classList.contains("locked")) {
+                event.preventDefault();
+                return false;
+            }
+            draggedItem = this;
+            setTimeout(() => this.classList.add("dragging"), 0);
+        }
+        
+        function dragOver(e) {
+            e.preventDefault();
+        }
+        
+        function dragEnter(e) {
+            e.preventDefault();
+        }
+        
+        function dragLeave() {
+        }
+        
+        function drop() {
+            if (this !== draggedItem && !sentencesContainer.classList.contains("locked")) {
+                const allSentences = Array.from(sentencesContainer.querySelectorAll(".sentence"));
+                const draggedIndex = allSentences.indexOf(draggedItem);
+                const dropIndex = allSentences.indexOf(this);
+                
+                if (draggedIndex < dropIndex) {
+                    this.parentNode.insertBefore(draggedItem, this.nextSibling);
+                } else {
+                    this.parentNode.insertBefore(draggedItem, this);
+                }
+            }
+        }
+        
+        function dragEnd() {
+            this.classList.remove("dragging");
+        }
+        
+        // Check answer functionality
+        checkButton.addEventListener("click", () => {
+            if (hasCheckedAnswer) return;
+            
+            const currentSentences = Array.from(sentencesContainer.querySelectorAll(".sentence"));
+            const currentTexts = currentSentences.map(el => el.textContent);
+            
+            let correctCount = 0;
+            
+            // Check each sentence and mark as correct/incorrect
+            currentSentences.forEach((sentenceEl, index) => {
+                sentenceEl.classList.remove("correct", "incorrect");
+                
+                if (currentTexts[index] === correctOrder[index]) {
+                    sentenceEl.classList.add("correct");
+                    correctCount++;
+                } else {
+                    sentenceEl.classList.add("incorrect");
+                }
+            });
+            
+            // Calculate score percentage
+            const totalSentences = correctOrder.length;
+            const scorePercentage = Math.round((correctCount / totalSentences) * 100);
+            
+            // Stop timer
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+            
+            // Update score display
+            scoreDisplay.style.display = "block";
+            pointsText.textContent = `Score: ${correctCount}/${totalSentences} points`;
+            progressBar.style.width = `${scorePercentage}%`;
+            progressBar.textContent = `${scorePercentage}%`;
+            
+            // Update result message
+            resultDiv.style.display = "block";
+            
+            if (correctCount === totalSentences) {
+                resultDiv.textContent = "Perfect! All sentences are in the correct order.";
+                resultDiv.className = "correct-result";
+            } else if (correctCount > 0) {
+                resultDiv.textContent = `You have ${correctCount} out of ${totalSentences} sentences in the correct position. Keep trying!`;
+                resultDiv.className = "partial-result";
+            } else {
+                resultDiv.textContent = "None of the sentences are in the correct position yet. Try again!";
+                resultDiv.className = "incorrect-result";
+            }
+            
+            // Lock the exercise
+            hasCheckedAnswer = true;
+            checkButton.disabled = true;
+            sentencesContainer.classList.add("locked");
+            attemptInfo.style.display = "block";
+        });
+        
+        // Reset password functionality
+        resetButton.addEventListener("click", () => {
+            passwordModal.classList.remove("hidden");
+            resetPasswordInput.value = "";
+            resetPasswordInput.focus();
+        });
+        
+        cancelResetBtn.addEventListener("click", () => {
+            passwordModal.classList.add("hidden");
+        });
+        
+        confirmResetBtn.addEventListener("click", () => {
+            const enteredPassword = resetPasswordInput.value;
+            
+            if (enteredPassword === RESET_PASSWORD) {
+                passwordModal.classList.add("hidden");
+                loadExample(currentExample);
+            } else {
+                alert("Incorrect password. Please try again.");
+            }
+        });
+        
+        // Initialize by showing the login form
+        window.onload = function() {
+            authView.classList.remove("hidden");
+            loginContainer.classList.remove("hidden");
+            signupContainer.classList.add("hidden");
+            appView.classList.add("hidden");
+        };
+    </script>
+</body>
+</html>
