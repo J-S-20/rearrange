@@ -115,6 +115,15 @@
             margin-bottom: 15px;
         }
         
+        .user-info {
+            background-color: #eaf2f8;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            border-left: 4px solid #3498db;
+            text-align: left;
+        }
+        
         .score {
             font-size: 1.8rem;
             color: #27ae60;
@@ -140,19 +149,91 @@
         .sentence.incorrect {
             background-color: #e74c3c;
         }
+        
+        /* Registration Form Styles */
+        #registration-screen {
+            text-align: center;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        .form-group input:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+        }
+        
+        .error-message {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Sentence Reordering Game</h1>
         
-        <div class="instructions">
-            <p>Drag and drop the sentences to arrange them in the correct order. You have 1:30 minutes for each situation.</p>
-            <p>Once you finish a situation, click the "Check Answers" button to see your score.</p>
-            <p>You can only attempt each question once. Good luck!</p>
+        <!-- Registration Screen -->
+        <div id="registration-screen">
+            <div class="instructions">
+                <p>Welcome to the Sentence Reordering Game! Please enter your details to begin.</p>
+            </div>
+            
+            <form id="registration-form">
+                <div class="form-group">
+                    <label for="name">Full Name:</label>
+                    <input type="text" id="name" name="name" required>
+                    <div class="error-message" id="name-error">Please enter your name</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="roll">Roll Number:</label>
+                    <input type="text" id="roll" name="roll" required>
+                    <div class="error-message" id="roll-error">Please enter your roll number</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="department">Department:</label>
+                    <input type="text" id="department" name="department" required>
+                    <div class="error-message" id="department-error">Please enter your department</div>
+                </div>
+                
+                <button type="submit" id="start-btn">Start Game</button>
+            </form>
         </div>
         
-        <div id="game-screen">
+        <!-- Game Screen (initially hidden) -->
+        <div id="game-screen" style="display: none;">
+            <div class="instructions">
+                <p>Drag and drop the sentences to arrange them in the correct order. You have 1:30 minutes for each situation.</p>
+                <p>Once you finish a situation, click the "Check Answers" button to see your score.</p>
+                <p>You can only attempt each question once. Good luck!</p>
+            </div>
+            
+            <div class="user-info" id="user-info-display">
+                <!-- User details will be displayed here -->
+            </div>
+            
             <div class="timer" id="timer">Time remaining: 1:30</div>
             <div class="situation-title" id="situation-title">Situation 1</div>
             
@@ -164,8 +245,14 @@
             <button id="next-btn" style="display: none;">Next Situation</button>
         </div>
         
+        <!-- Result Screen (initially hidden) -->
         <div id="result-screen" class="result">
             <h2>Game Complete!</h2>
+            
+            <div class="user-info" id="result-user-info">
+                <!-- User details will be displayed here -->
+            </div>
+            
             <div class="score" id="final-score">Score: 0/10</div>
             <div class="time-taken" id="time-taken">Time taken: 0 minutes and 0 seconds</div>
             <div class="feedback" id="feedback"></div>
@@ -205,8 +292,15 @@
         let startTime;
         let totalTime = 0;
         let hasChecked = [false, false];
+        let userData = {
+            name: "",
+            roll: "",
+            department: ""
+        };
         
         // DOM elements
+        const registrationScreen = document.getElementById('registration-screen');
+        const registrationForm = document.getElementById('registration-form');
         const gameScreen = document.getElementById('game-screen');
         const resultScreen = document.getElementById('result-screen');
         const timerElement = document.getElementById('timer');
@@ -217,6 +311,76 @@
         const finalScore = document.getElementById('final-score');
         const timeTaken = document.getElementById('time-taken');
         const feedback = document.getElementById('feedback');
+        const userInfoDisplay = document.getElementById('user-info-display');
+        const resultUserInfo = document.getElementById('result-user-info');
+        
+        // Initialize the registration form
+        registrationForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Validate form
+            let isValid = true;
+            
+            const nameInput = document.getElementById('name');
+            const rollInput = document.getElementById('roll');
+            const departmentInput = document.getElementById('department');
+            
+            const nameError = document.getElementById('name-error');
+            const rollError = document.getElementById('roll-error');
+            const departmentError = document.getElementById('department-error');
+            
+            // Reset error messages
+            nameError.style.display = 'none';
+            rollError.style.display = 'none';
+            departmentError.style.display = 'none';
+            
+            // Validate name
+            if (!nameInput.value.trim()) {
+                nameError.style.display = 'block';
+                isValid = false;
+            }
+            
+            // Validate roll number
+            if (!rollInput.value.trim()) {
+                rollError.style.display = 'block';
+                isValid = false;
+            }
+            
+            // Validate department
+            if (!departmentInput.value.trim()) {
+                departmentError.style.display = 'block';
+                isValid = false;
+            }
+            
+            if (isValid) {
+                // Store user data
+                userData.name = nameInput.value.trim();
+                userData.roll = rollInput.value.trim();
+                userData.department = departmentInput.value.trim();
+                
+                // Display user info
+                displayUserInfo();
+                
+                // Hide registration screen, show game screen
+                registrationScreen.style.display = 'none';
+                gameScreen.style.display = 'block';
+                
+                // Start the game
+                initGame();
+            }
+        });
+        
+        // Display user information
+        function displayUserInfo() {
+            const userInfoHTML = `
+                <strong>Name:</strong> ${userData.name} | 
+                <strong>Roll Number:</strong> ${userData.roll} | 
+                <strong>Department:</strong> ${userData.department}
+            `;
+            
+            userInfoDisplay.innerHTML = userInfoHTML;
+            resultUserInfo.innerHTML = userInfoHTML;
+        }
         
         // Initialize the game
         function initGame() {
@@ -415,9 +579,6 @@
             gameScreen.style.display = 'none';
             resultScreen.style.display = 'block';
         }
-        
-        // Initialize the game when the page loads
-        window.addEventListener('load', initGame);
     </script>
 </body>
 </html>
