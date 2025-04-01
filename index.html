@@ -3,970 +3,421 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sentence Ordering Exercise</title>
+    <title>Sentence Reordering Game</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
         }
+        
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
         h1 {
             color: #2c3e50;
             text-align: center;
         }
-        .container {
-            margin-top: 30px;
-        }
-        .sentence-container {
-            background-color: #f5f5f5;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        .sentence {
-            background-color: white;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 10px 15px;
-            margin: 8px 0;
-            cursor: grab;
-            transition: all 0.2s;
-        }
-        .sentence:hover {
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-        .sentence.dragging {
-            opacity: 0.5;
-        }
-        .sentence.correct {
-            border-left: 4px solid #2ecc71;
-        }
-        .sentence.incorrect {
-            border-left: 4px solid #e74c3c;
-        }
-        .locked .sentence {
-            cursor: not-allowed;
-            opacity: 0.9;
-        }
-        .controls {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-        }
-        button {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s;
-            margin: 0 5px;
-        }
-        button:hover {
-            background-color: #2980b9;
-        }
-        button:disabled {
-            background-color: #95a5a6;
-            cursor: not-allowed;
-        }
-        #check-btn {
-            background-color: #2ecc71;
-        }
-        #check-btn:hover {
-            background-color: #27ae60;
-        }
-        #check-btn:disabled {
-            background-color: #95a5a6;
-        }
-        #result {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 4px;
-            display: none;
-        }
-        .correct-result {
-            background-color: #d4edda;
-            color: #155724;
-        }
-        .partial-result {
-            background-color: #fff3cd;
-            color: #856404;
-        }
-        .incorrect-result {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-        .examples-row {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
-        }
-        .example-btn {
-            margin: 0 5px 10px;
-            background-color: #f39c12;
-        }
-        .example-btn:hover {
-            background-color: #d35400;
-        }
-        .example-btn.active {
-            background-color: #d35400;
-            box-shadow: 0 0 5px rgba(0,0,0,0.3);
-        }
-        .score-display {
-            text-align: center;
-            font-size: 18px;
-            font-weight: bold;
-            margin-top: 15px;
-        }
-        .progress-container {
-            width: 100%;
-            background-color: #e0e0e0;
-            border-radius: 10px;
-            margin-top: 10px;
-            overflow: hidden;
-        }
-        .progress-bar {
-            height: 20px;
-            background-color: #3498db;
-            text-align: center;
-            line-height: 20px;
-            color: white;
-            transition: width 0.5s;
-        }
+        
         .instructions {
-            background-color: #e8f4f8;
+            background-color: #f8f9fa;
             padding: 15px;
-            border-radius: 8px;
+            border-radius: 5px;
             margin-bottom: 20px;
             border-left: 4px solid #3498db;
         }
-        .attempt-info {
+        
+        .timer {
+            font-size: 1.2rem;
             text-align: center;
-            margin-top: 15px;
-            font-style: italic;
-            color: #7f8c8d;
-        }
-        .current-example {
-            text-align: center;
-            font-weight: bold;
-            margin-bottom: 15px;
-            color: #2c3e50;
-            font-size: 18px;
-        }
-        /* Student Entry Form Styles */
-        .student-entry-container {
-            max-width: 400px;
-            margin: 0 auto;
-            background-color: #f5f5f5;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        .student-form {
-            display: flex;
-            flex-direction: column;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
+            margin: 10px 0;
+            color: #e74c3c;
             font-weight: bold;
         }
-        .form-group input {
-            width: 100%;
-            padding: 10px;
+        
+        .situation-title {
+            background-color: #3498db;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .sentences-container {
+            min-height: 300px;
             border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 16px;
+            border-radius: 5px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            margin-bottom: 20px;
         }
-        #start-btn {
+        
+        .sentence {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 15px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            cursor: move;
+            user-select: none;
+            box-shadow: 0 2px 3px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        
+        .sentence:hover {
+            transform: translateY(-2px);
+        }
+        
+        .sentence.dragging {
+            opacity: 0.5;
+        }
+        
+        button {
             background-color: #2ecc71;
-            width: 100%;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 20px;
+            transition: background-color 0.3s;
         }
-        #start-btn:hover {
+        
+        button:hover {
             background-color: #27ae60;
         }
-        .user-info {
-            text-align: right;
-            margin-bottom: 10px;
-        }
-        .user-details {
-            background-color: #f5f5f5;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-        }
-        .student-info span {
-            font-weight: bold;
-        }
-        .timer-container {
-            text-align: center;
-            font-size: 20px;
-            font-weight: bold;
-            margin: 15px 0;
-            color: #2c3e50;
-        }
-        .timer-warning {
-            color: #e74c3c;
-        }
-        /* Modal Styles */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0,0,0,0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        .modal {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            max-width: 400px;
-            width: 100%;
-        }
-        .modal h3 {
-            margin-top: 0;
-            color: #2c3e50;
-        }
-        .modal-footer {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 20px;
-        }
-        .hidden {
-            display: none !important;
-        }
-        #next-btn {
-            background-color: #9b59b6;
-        }
-        #next-btn:hover {
-            background-color: #8e44ad;
-        }
-        #next-btn:disabled {
-            background-color: #95a5a6;
+        
+        button:disabled {
+            background-color: #bdc3c7;
             cursor: not-allowed;
         }
-
-        .summary-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 15px;
-    }
-    
-    .summary-table th,
-    .summary-table td {
-        border: 1px solid #ddd;
-        padding: 8px;
-        text-align: left;
-    }
-    
-    .summary-table th {
-        background-color: #f2f2f2;
-    }
-    
-    .summary-table .total-row {
-        font-weight: bold;
-        background-color: #e8f4f8;
-    }
-    
-    .example-btn.completed {
-        background-color: #2ecc71;
-    }
-    
-    .example-btn.completed:hover {
-        background-color: #27ae60;
-    }
+        
+        .result {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #e8f4f8;
+            border-radius: 5px;
+            border: 1px solid #3498db;
+        }
+        
+        .result h2 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .score {
+            font-size: 1.8rem;
+            color: #27ae60;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+        
+        .time-taken {
+            font-size: 1.2rem;
+            color: #e67e22;
+            margin-bottom: 15px;
+        }
+        
+        .feedback {
+            font-weight: bold;
+            margin-top: 15px;
+        }
+        
+        .sentence.correct {
+            background-color: #2ecc71;
+        }
+        
+        .sentence.incorrect {
+            background-color: #e74c3c;
+        }
     </style>
 </head>
 <body>
-    <!-- Student Information Entry View -->
-    <div id="student-entry-view">
-        <h1>Sentence Ordering Exercise</h1>
+    <div class="container">
+        <h1>Sentence Reordering Game</h1>
         
-        <div class="student-entry-container">
-            <h2>Student Information</h2>
-            <form class="student-form" id="student-form">
-                <div class="form-group">
-                    <label for="student-name">Full Name</label>
-                    <input type="text" id="student-name" required>
-                </div>
-                <div class="form-group">
-                    <label for="roll-number">Roll Number</label>
-                    <input type="text" id="roll-number" required>
-                </div>
-                <div class="form-group">
-                    <label for="department">Department</label>
-                    <input type="text" id="department" required>
-                </div>
-                <button type="submit" id="start-btn">Start Game</button>
-            </form>
-        </div>
-    </div>
-    
-    <!-- Main Application View (hidden initially) -->
-    <div id="app-view" class="hidden">
-        <h1>Sentence Ordering Exercise</h1>
-        
-        <div class="user-details">
-            <div class="student-info">
-                <div>Name: <span id="display-name"></span></div>
-                <div>Roll: <span id="display-roll"></span></div>
-            </div>
-            <div class="student-info">
-                <div>Department: <span id="display-department"></span></div>
-                <button id="logout-btn" class="logout-btn">Exit Game</button>
-            </div>
+        <div class="instructions">
+            <p>Drag and drop the sentences to arrange them in the correct order. You have 1:30 minutes for each situation.</p>
+            <p>Once you finish a situation, click the "Check Answers" button to see your score.</p>
+            <p>You can only attempt each question once. Good luck!</p>
         </div>
         
-        <div class="container">
-            <div class="instructions">
-                <p><strong>Instructions:</strong> Drag and drop the sentences into the correct order. You can check your answer only once per attempt. You have 1 minute and 30 seconds to complete each exercise.</p>
+        <div id="game-screen">
+            <div class="timer" id="timer">Time remaining: 1:30</div>
+            <div class="situation-title" id="situation-title">Situation 1</div>
+            
+            <div id="sentences-container" class="sentences-container">
+                <!-- Sentences will be dynamically added here -->
             </div>
             
-            <div class="timer-container" id="timer-container">
-                Time remaining: <span id="timer">1:30</span>
-            </div>
-            
-            <div class="examples-row" id="examples-row">
-                <!-- Example buttons will be added here -->
-            </div>
-            
-            <div class="current-example" id="current-example">
-                Current Example: A Day at the Beach
-            </div>
-            
-            <div class="sentence-container" id="sentences">
-                <!-- Sentences will be added here -->
-            </div>
-            
-            <div class="score-display" id="score-display" style="display: none;">
-                <div id="points-text">Score: 0/5 points</div>
-                <div class="progress-container">
-                    <div class="progress-bar" id="progress-bar" style="width: 0%">0%</div>
-                </div>
-            </div>
-            
-            <div class="attempt-info" id="attempt-info" style="display: none;">
-                You've used your one check for this attempt. Reset or select a new example to try again.
-            </div>
-            
-            <div class="controls">
-                <button id="check-btn">Check Answer</button>
-                <button id="next-btn" disabled>Next Question</button>
-            </div>
-            
-            <div id="result"></div>
+            <button id="check-btn">Check Answers</button>
+            <button id="next-btn" style="display: none;">Next Situation</button>
         </div>
-    </div>
-    
-    <!-- Time's Up Modal -->
-    <div id="times-up-modal" class="modal-overlay hidden">
-        <div class="modal">
-            <h3>Time's Up!</h3>
-            <p>You've run out of time for this exercise.</p>
-            <div class="modal-footer">
-                <button id="time-up-ok">OK</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="summary-modal" class="modal-overlay hidden">
-        <div class="modal">
-            <h3>Exercise Summary</h3>
-            <div id="summary-content"></div>
-            <div class="modal-footer">
-                <button id="summary-ok">OK</button>
-            </div>
+        
+        <div id="result-screen" class="result">
+            <h2>Game Complete!</h2>
+            <div class="score" id="final-score">Score: 0/10</div>
+            <div class="time-taken" id="time-taken">Time taken: 0 minutes and 0 seconds</div>
+            <div class="feedback" id="feedback"></div>
         </div>
     </div>
 
     <script>
-       // Add this at the beginning of your script section
-const script = document.createElement('script');
-script.textContent = `
-    // Define examples with correct order
-  const examples = {
-    story1: {
-        title: "Request for Sponsorship",
-        sentences: [
-            "I am reaching out on behalf of TechX Robotics Club, seeking sponsorship for the upcoming National Robotics Championship 2025.",
-            "Our team has consistently excelled in innovation, and your support would help us develop cutting-edge prototypes for the competition.",
-            "In return, we can offer brand visibility through banners, event promotions, and social media campaigns.",
-            "Please let us know if you would be interested in discussing this opportunity further.",
-            "We appreciate your consideration and look forward to the possibility of collaborating with your esteemed organization."
-        ],
-        completed: false,
-        score: 0,
-        completionTime: null // Add this line
-    },
-    story2: {
-        title: "Invitation to an Event",
-        sentences: [
-            "I am excited to invite you to the Tech Conference 2025 on May 5 at The Grand Hall, Mumbai.",
-            "The event will provide networking opportunities with industry leaders.",
-            "You’ll get insights into the latest technological innovations.",
-            "Please let me know if you will be able to attend.",
-            "The presence of yours we look forward to."
-        ],
-        completed: false,
-        score: 0,
-        completionTime: null // Add this line
-    },
-    
-};
-
-    let currentExample = "story1";
-    let correctOrder = [...examples[currentExample].sentences];
-    let hasCheckedAnswer = false;
-    let currentStudent = null;
-    let timerInterval = null;
-    let timeRemaining = 90; // 1 minute and 30 seconds
-    let allCompleted = false;
-    
-    // DOM elements
-    const studentEntryView = document.getElementById("student-entry-view");
-    const appView = document.getElementById("app-view");
-    const studentForm = document.getElementById("student-form");
-    const displayName = document.getElementById("display-name");
-    const displayRoll = document.getElementById("display-roll");
-    const displayDepartment = document.getElementById("display-department");
-    const logoutBtn = document.getElementById("logout-btn");
-    const timesUpModal = document.getElementById("times-up-modal");
-    const timeUpOkBtn = document.getElementById("time-up-ok");
-    const summaryModal = document.getElementById("summary-modal");
-    const summaryOkBtn = document.getElementById("summary-ok");
-
-    const sentencesContainer = document.getElementById("sentences");
-    const checkButton = document.getElementById("check-btn");
-    const resultDiv = document.getElementById("result");
-    const scoreDisplay = document.getElementById("score-display");
-    const pointsText = document.getElementById("points-text");
-    const progressBar = document.getElementById("progress-bar");
-    const attemptInfo = document.getElementById("attempt-info");
-    const examplesRow = document.getElementById("examples-row");
-    const currentExampleTitle = document.getElementById("current-example");
-    const timerContainer = document.getElementById("timer-container");
-    const timerSpan = document.getElementById("timer");
-    const nextButton = document.getElementById("next-btn");
-
-    // Update the summary display
-    function updateSummaryDisplay() {
-        const summaryContent = document.getElementById("summary-content");
-        summaryContent.innerHTML = "";
-        
-        let totalScore = 0;
-        let totalPossible = 0;
-        
-        // Create summary table
-        const table = document.createElement("table");
-        table.className = "summary-table";
-        
-        // Add header row
-        const headerRow = document.createElement("tr");
-        const header1 = document.createElement("th");
-        header1.textContent = "Exercise";
-        const header2 = document.createElement("th");
-        header2.textContent = "Score";
-        headerRow.appendChild(header1);
-        headerRow.appendChild(header2);
-        table.appendChild(headerRow);
-        
-        // Add data rows
-        Object.keys(examples).forEach(key => {
-            const example = examples[key];
-            const row = document.createElement("tr");
-            
-            const titleCell = document.createElement("td");
-            titleCell.textContent = example.title;
-            
-            const scoreCell = document.createElement("td");
-            if (example.completed) {
-                scoreCell.textContent = \`\${example.score}/\${example.sentences.length}\`;
-                totalScore += example.score;
-                totalPossible += example.sentences.length;
-            } else {
-                scoreCell.textContent = "Not attempted";
+        // Game data
+        const situations = [
+            {
+                title: "Morning Routine",
+                sentences: [
+                    "I wake up early every morning and stretch for five minutes.",
+                    "Then I brush my teeth and take a quick shower to freshen up.",
+                    "After that, I prepare a healthy breakfast with fruits and oatmeal.",
+                    "While eating, I check my emails and plan my day's schedule.",
+                    "Finally, I get dressed, grab my belongings and head out to work."
+                ]
+            },
+            {
+                title: "Planning a Trip",
+                sentences: [
+                    "We decided to visit Paris next summer after saving money for months.",
+                    "My friend researched and booked the flight tickets through a travel agency.",
+                    "I found a charming hotel in the city center near major attractions.",
+                    "We created an itinerary including the Eiffel Tower, Louvre, and local cafes.",
+                    "Everyone is excited about the trip and has started packing their bags."
+                ]
             }
-            
-            row.appendChild(titleCell);
-            row.appendChild(scoreCell);
-            table.appendChild(row);
-        });
-        
-        // Add total row
-        const totalRow = document.createElement("tr");
-        totalRow.className = "total-row";
-        
-        const totalLabelCell = document.createElement("td");
-        totalLabelCell.textContent = "Total Score:";
-        
-        const totalScoreCell = document.createElement("td");
-        totalScoreCell.textContent = \`\${totalScore}/\${totalPossible} (\${Math.round((totalScore/totalPossible)*100)}%)\`;
-        
-        totalRow.appendChild(totalLabelCell);
-        totalRow.appendChild(totalScoreCell);
-        table.appendChild(totalRow);
-        
-        // Add table to summary
-        summaryContent.appendChild(table);
-    }
+        ];
 
-    // Check if all examples are completed
-    function checkAllCompleted() {
-        allCompleted = Object.keys(examples).every(key => examples[key].completed);
+        // Game variables
+        let currentSituation = 0;
+        let timeLeft = 90; // 1:30 minutes in seconds
+        let timer;
+        let scores = [0, 0];
+        let startTime;
+        let totalTime = 0;
+        let hasChecked = [false, false];
         
-        if (allCompleted) {
-            updateSummaryDisplay();
-            summaryModal.classList.remove("hidden");
-        }
-    }
-
-    // Student form submission handler
-    studentForm.addEventListener("submit", function(e) {
-        e.preventDefault();
+        // DOM elements
+        const gameScreen = document.getElementById('game-screen');
+        const resultScreen = document.getElementById('result-screen');
+        const timerElement = document.getElementById('timer');
+        const situationTitle = document.getElementById('situation-title');
+        const sentencesContainer = document.getElementById('sentences-container');
+        const checkBtn = document.getElementById('check-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const finalScore = document.getElementById('final-score');
+        const timeTaken = document.getElementById('time-taken');
+        const feedback = document.getElementById('feedback');
         
-        const name = document.getElementById("student-name").value;
-        const roll = document.getElementById("roll-number").value;
-        const department = document.getElementById("department").value;
-        
-        // Store student information
-        currentStudent = {
-            name: name,
-            roll: roll,
-            department: department
-        };
-        
-        // Update UI
-        displayName.textContent = name;
-        displayRoll.textContent = roll;
-        displayDepartment.textContent = department;
-        
-        // Show app view
-        studentEntryView.classList.add("hidden");
-        appView.classList.remove("hidden");
-        
-        // Initialize app
-        createExampleButtons();
-        loadExample(currentExample);
-    });
-    
-    // Next button handler
-    nextButton.addEventListener("click", () => {
-        // Get the current example key
-        const currentExampleIndex = Object.keys(examples).indexOf(currentExample);
-        const exampleKeys = Object.keys(examples);
-        
-        // Find next unfinished example
-        let nextExampleIndex = (currentExampleIndex + 1) % exampleKeys.length;
-        let nextExampleKey = exampleKeys[nextExampleIndex];
-        
-        // If we've gone through all examples, check if all are completed
-        if (nextExampleIndex <= currentExampleIndex && Object.keys(examples).every(key => examples[key].completed)) {
-            // All examples are completed, show summary
-            updateSummaryDisplay();
-            summaryModal.classList.remove("hidden");
-            return;
+        // Initialize the game
+        function initGame() {
+            startTime = new Date();
+            loadSituation(currentSituation);
+            startTimer();
+            
+            checkBtn.addEventListener('click', checkAnswers);
+            nextBtn.addEventListener('click', nextSituation);
         }
         
-        // Find the next uncompleted example (if all completed, this won't execute)
-        while (examples[nextExampleKey].completed && nextExampleIndex !== currentExampleIndex) {
-            nextExampleIndex = (nextExampleIndex + 1) % exampleKeys.length;
-            nextExampleKey = exampleKeys[nextExampleIndex];
-        }
-        
-        // Load the next example
-        loadExample(nextExampleKey);
-        
-        // Update active button in examples row
-        document.querySelectorAll(".example-btn").forEach(btn => {
-            btn.classList.remove("active");
-        });
-        document.querySelectorAll(".example-btn")[nextExampleIndex].classList.add("active");
-    });
-    
-    // Logout (Exit Game) Handler
-    logoutBtn.addEventListener("click", function() {
-        // Clear current student
-        currentStudent = null;
-        
-        // Stop timer if running
-        if (timerInterval) {
-            clearInterval(timerInterval);
-            timerInterval = null;
-        }
-        
-        // Reset all examples
-        Object.keys(examples).forEach(key => {
-            examples[key].completed = false;
-            examples[key].score = 0;
-        });
-        
-        // Show student entry view
-        appView.classList.add("hidden");
-        studentEntryView.classList.remove("hidden");
-        summaryModal.classList.add("hidden");
-        
-        // Clear student form
-        document.getElementById("student-name").value = "";
-        document.getElementById("roll-number").value = "";
-        document.getElementById("department").value = "";
-    });
-    
-    // Timer functions
-    function startTimer() {
-        // Clear any existing timer
-        if (timerInterval) {
-            clearInterval(timerInterval);
-        }
-        
-        // If example is already completed, don't start timer
-        if (examples[currentExample].completed) {
-            return;
-        }
-        
-        // Reset time
-        timeRemaining = 90; // 1:30 minutes
-        updateTimerDisplay();
-        
-        // Start new timer
-        timerInterval = setInterval(function() {
-            timeRemaining--;
-            updateTimerDisplay();
+        // Load a situation
+        function loadSituation(index) {
+            situationTitle.textContent = `Situation ${index + 1}: ${situations[index].title}`;
+            sentencesContainer.innerHTML = '';
             
-            if (timeRemaining <= 30) {
-                timerSpan.classList.add("timer-warning");
-            } else {
-                timerSpan.classList.remove("timer-warning");
-            }
+            // Shuffle sentences and add them to the container
+            const shuffledSentences = [...situations[index].sentences].sort(() => Math.random() - 0.5);
             
-            if (timeRemaining <= 0) {
-                // Time's up
-                clearInterval(timerInterval);
-                timesUpModal.classList.remove("hidden");
-                
-                // Lock the exercise
-                hasCheckedAnswer = true;
-                checkButton.disabled = true;
-                sentencesContainer.classList.add("locked");
-                
-                // Mark as completed with score 0
-                examples[currentExample].completed = true;
-                examples[currentExample].score = 0;
-                
-                // Check if all completed
-                checkAllCompleted();
-                
-                // Enable the next button when time's up
-                nextButton.disabled = false;
-            }
-        }, 1000);
-    }
-    
-    function updateTimerDisplay() {
-        const minutes = Math.floor(timeRemaining / 60);
-        const seconds = timeRemaining % 60;
-        timerSpan.textContent = \`\${minutes}:\${seconds.toString().padStart(2, '0')}\`;
-    }
-    
-    // Time's up modal handler
-    timeUpOkBtn.addEventListener("click", function() {
-        timesUpModal.classList.add("hidden");
-        attemptInfo.style.display = "block";
-        nextButton.disabled = false;  // Enable next button when acknowledging time's up
-    });
-
-    // Summary modal handler
-    summaryOkBtn.addEventListener("click", function() {
-        summaryModal.classList.add("hidden");
-    });
-    
-    // Create example buttons
-    function createExampleButtons() {
-        examplesRow.innerHTML = "";
-        
-        Object.keys(examples).forEach((key, index) => {
-            const button = document.createElement("button");
-            button.classList.add("example-btn");
-            if (key === currentExample) {
-                button.classList.add("active");
-            }
-            
-            // Add completed indicator to button text if completed
-            let buttonText = examples[key].title;
-            if (examples[key].completed) {
-                buttonText += \` (Score: \${examples[key].score}/\${examples[key].sentences.length})\`;
-            }
-            button.textContent = buttonText;
-            
-            button.addEventListener("click", () => {
-                if (key !== currentExample) {
-                    loadExample(key);
-                    
-                    // Update active button
-                    document.querySelectorAll(".example-btn").forEach(btn => {
-                        btn.classList.remove("active");
-                    });
-                    button.classList.add("active");
-                }
-            });
-            examplesRow.appendChild(button);
-        });
-    }
-    
-    // Load selected example
-    function loadExample(exampleKey) {
-        currentExample = exampleKey;
-        correctOrder = [...examples[exampleKey].sentences];
-        
-        // Check if this example is already completed
-        if (examples[exampleKey].completed) {
-            hasCheckedAnswer = true;
-            
-            // Update example title
-            currentExampleTitle.textContent = \`\${examples[exampleKey].title} (Completed - Score: \${examples[exampleKey].score}/\${examples[exampleKey].sentences.length})\`;
-            
-            // Clear current sentences
-            sentencesContainer.innerHTML = "";
-            sentencesContainer.classList.add("locked");
-            
-            // Create sentences in correct order
-            correctOrder.forEach(sentence => {
-                const sentenceElement = document.createElement("div");
-                sentenceElement.classList.add("sentence");
-                sentenceElement.classList.add("correct");
+            shuffledSentences.forEach((sentence, sentenceIndex) => {
+                const sentenceElement = document.createElement('div');
+                sentenceElement.className = 'sentence';
                 sentenceElement.textContent = sentence;
-                sentenceElement.draggable = false;
+                sentenceElement.dataset.correctIndex = situations[index].sentences.indexOf(sentence);
+                sentenceElement.dataset.currentIndex = sentenceIndex;
+                sentenceElement.draggable = true;
+                
+                sentenceElement.addEventListener('dragstart', dragStart);
+                sentenceElement.addEventListener('dragend', dragEnd);
+                
                 sentencesContainer.appendChild(sentenceElement);
             });
             
-            // Update UI for completed state
-            resultDiv.style.display = "block";
-            resultDiv.textContent = \`You scored \${examples[exampleKey].score} out of \${examples[exampleKey].sentences.length} on this exercise.\`;
-            resultDiv.className = examples[exampleKey].score === examples[exampleKey].sentences.length ? "correct-result" : "partial-result";
-            
-            scoreDisplay.style.display = "block";
-            const scorePercentage = Math.round((examples[exampleKey].score / examples[exampleKey].sentences.length) * 100);
-            pointsText.textContent = \`Score: \${examples[exampleKey].score}/\${examples[exampleKey].sentences.length} points\`;
-            progressBar.style.width = \`\${scorePercentage}%\`;
-            progressBar.textContent = \`\${scorePercentage}%\`;
-            
-            attemptInfo.style.display = "block";
-            attemptInfo.textContent = "You have already completed this exercise.";
-            
-            checkButton.disabled = true;
-            nextButton.disabled = false;
-            
-            // Don't start timer for completed examples
-            if (timerInterval) {
-                clearInterval(timerInterval);
-                timerInterval = null;
-            }
-            timerContainer.style.display = "none";
-            
-            return;
-        } else {
-            // Reset for new uncompleted example
-            hasCheckedAnswer = false;
-            timerContainer.style.display = "block";
+            // Add event listeners for drag and drop
+            sentencesContainer.addEventListener('dragover', dragOver);
+            sentencesContainer.addEventListener('drop', drop);
         }
         
-        // Update example title
-        currentExampleTitle.textContent = \`Current Example: \${examples[exampleKey].title}\`;
-        
-        // Clear current sentences
-        sentencesContainer.innerHTML = "";
-        sentencesContainer.classList.remove("locked");
-        
-        // Create shuffled array
-        let shuffled = [...correctOrder];
-        shuffleArray(shuffled);
-        
-        // Add sentences to container
-        shuffled.forEach(sentence => {
-            const sentenceElement = document.createElement("div");
-            sentenceElement.classList.add("sentence");
-            sentenceElement.textContent = sentence;
-            sentenceElement.draggable = true;
-            sentencesContainer.appendChild(sentenceElement);
+        // Start the timer
+        function startTimer() {
+            timeLeft = 90; // Reset to 1:30
+            updateTimerDisplay();
             
-            // Add drag events
-            sentenceElement.addEventListener("dragstart", dragStart);
-            sentenceElement.addEventListener("dragover", dragOver);
-            sentenceElement.addEventListener("dragenter", dragEnter);
-            sentenceElement.addEventListener("dragleave", dragLeave);
-            sentenceElement.addEventListener("drop", drop);
-            sentenceElement.addEventListener("dragend", dragEnd);
-        });
-        
-        // Reset UI elements
-        resultDiv.style.display = "none";
-        scoreDisplay.style.display = "none";
-        attemptInfo.style.display = "none";
-        checkButton.disabled = false;
-        nextButton.disabled = true;  // Disable next button when loading a new example
-        
-        // Reset sentence styling
-        const allSentences = document.querySelectorAll(".sentence");
-        allSentences.forEach(sentence => {
-            sentence.classList.remove("correct", "incorrect");
-        });
-        
-        // Start timer for new example
-        startTimer();
-    }
-    
-    // Shuffle array (Fisher-Yates algorithm)
-    function shuffleArray(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
+            clearInterval(timer); // Clear any existing timer
+            timer = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    checkAnswers();
+                }
+            }, 1000);
         }
-        return array;
-    }
-    
-    // Dragging functionality
-    let draggedItem = null;
-    
-    function dragStart() {
-        // Only allow dragging if not locked
-        if (sentencesContainer.classList.contains("locked")) {
-            event.preventDefault();
-            return false;
-        }
-        draggedItem = this;
-        setTimeout(() => this.classList.add("dragging"), 0);
-    }
-    
-    function dragOver(e) {
-        e.preventDefault();
-    }
-    
-    function dragEnter(e) {
-        e.preventDefault();
-    }
-    
-    function dragLeave() {
-    }
-    
-    function drop() {
-        if (this !== draggedItem && !sentencesContainer.classList.contains("locked")) {
-            const allSentences = Array.from(sentencesContainer.querySelectorAll(".sentence"));
-            const draggedIndex = allSentences.indexOf(draggedItem);
-            const dropIndex = allSentences.indexOf(this);
+        
+        // Update timer display
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerElement.textContent = `Time remaining: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
             
-            if (draggedIndex < dropIndex) {
-                this.parentNode.insertBefore(draggedItem, this.nextSibling);
+            if (timeLeft <= 10) {
+                timerElement.style.color = '#e74c3c'; // Red for last 10 seconds
             } else {
-                this.parentNode.insertBefore(draggedItem, this);
+                timerElement.style.color = '#2c3e50'; // Normal color
             }
         }
-    }
-    
-    function dragEnd() {
-        this.classList.remove("dragging");
-    }
-    
-    // Check answer functionality
-    checkButton.addEventListener("click", () => {
-        if (hasCheckedAnswer || examples[currentExample].completed) return;
         
-        const currentSentences = Array.from(sentencesContainer.querySelectorAll(".sentence"));
-        const currentTexts = currentSentences.map(el => el.textContent);
+        // Drag and drop functionality
+        let draggedSentence = null;
         
-        let correctCount = 0;
-        
-        // Check each sentence and mark as correct/incorrect
-        currentSentences.forEach((sentenceEl, index) => {
-            sentenceEl.classList.remove("correct", "incorrect");
+        function dragStart(e) {
+            draggedSentence = this;
+            this.classList.add('dragging');
             
-            if (currentTexts[index] === correctOrder[index]) {
-                sentenceEl.classList.add("correct");
-                correctCount++;
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', this.dataset.correctIndex);
+        }
+        
+        function dragEnd(e) {
+            this.classList.remove('dragging');
+            draggedSentence = null;
+        }
+        
+        function dragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            
+            // Find the target sentence
+            const targetSentence = e.target.closest('.sentence');
+            if (!targetSentence || targetSentence === draggedSentence) return;
+            
+            // Get all sentences
+            const sentences = Array.from(sentencesContainer.querySelectorAll('.sentence'));
+            const draggedIndex = sentences.indexOf(draggedSentence);
+            const targetIndex = sentences.indexOf(targetSentence);
+            
+            // Determine if we're moving up or down
+            if (draggedIndex < targetIndex) {
+                sentencesContainer.insertBefore(draggedSentence, targetSentence.nextSibling);
             } else {
-                sentenceEl.classList.add("incorrect");
+                sentencesContainer.insertBefore(draggedSentence, targetSentence);
             }
-        });
-        
-        // Store the score
-        examples[currentExample].completed = true;
-        examples[currentExample].score = correctCount;
-        
-        // Update example buttons to show scores
-        createExampleButtons();
-        
-        // Calculate score percentage
-        const totalSentences = correctOrder.length;
-        const scorePercentage = Math.round((correctCount / totalSentences) * 100);
-        
-        // Stop timer
-        if (timerInterval) {
-            clearInterval(timerInterval);
-            timerInterval = null;
         }
         
-        // Update score display
-        scoreDisplay.style.display = "block";
-        pointsText.textContent = \`Score: \${correctCount}/\${totalSentences} points\`;
-        progressBar.style.width = \`\${scorePercentage}%\`;
-        progressBar.textContent = \`\${scorePercentage}%\`;
-        
-        // Update result message
-        resultDiv.style.display = "block";
-        
-        if (correctCount === totalSentences) {
-            resultDiv.textContent = "Perfect! All sentences are in the correct order.";
-            resultDiv.className = "correct-result";
-        } else if (correctCount > 0) {
-            resultDiv.textContent = \`You have \${correctCount} out of \${totalSentences} sentences in the correct position.\`;
-            resultDiv.className = "partial-result";
-        } else {
-            resultDiv.textContent = "None of the sentences are in the correct position.";
-            resultDiv.className = "incorrect-result";
+        function drop(e) {
+            e.preventDefault();
+            // The actual reordering is done in dragOver
         }
         
-        // Lock the exercise
-        hasCheckedAnswer = true;
-        checkButton.disabled = true;
-        sentencesContainer.classList.add("locked");
-        attemptInfo.style.display = "block";
+        // Check answers
+        function checkAnswers() {
+            clearInterval(timer);
+            
+            if (hasChecked[currentSituation]) return;
+            
+            // Calculate score for current situation
+            const sentences = Array.from(sentencesContainer.querySelectorAll('.sentence'));
+            let correctCount = 0;
+            
+            sentences.forEach((sentence, index) => {
+                const correctIndex = parseInt(sentence.dataset.correctIndex);
+                
+                if (correctIndex === index) {
+                    correctCount++;
+                    sentence.classList.add('correct');
+                } else {
+                    sentence.classList.add('incorrect');
+                }
+                
+                // Disable dragging
+                sentence.draggable = false;
+            });
+            
+            scores[currentSituation] = correctCount;
+            hasChecked[currentSituation] = true;
+            
+            // Show next button or results
+            checkBtn.style.display = 'none';
+            
+            if (currentSituation < situations.length - 1) {
+                nextBtn.style.display = 'inline-block';
+            } else {
+                showResults();
+            }
+        }
         
-        // Check if all examples are now completed
-        checkAllCompleted();
+        // Move to next situation
+        function nextSituation() {
+            currentSituation++;
+            
+            if (currentSituation < situations.length) {
+                loadSituation(currentSituation);
+                startTimer();
+                checkBtn.style.display = 'inline-block';
+                nextBtn.style.display = 'none';
+            } else {
+                showResults();
+            }
+        }
         
-        // Enable the next button after checking
-        nextButton.disabled = false;
-    });
-    
-    // Summary OK button handler
-    if (summaryOkBtn) {
-        summaryOkBtn.addEventListener("click", function() {
-            summaryModal.classList.add("hidden");
-        });
-    }
-    
-    // Initialize by showing the student entry form
-    window.onload = function() {
-        studentEntryView.classList.remove("hidden");
-        appView.classList.add("hidden");
-    };
-`;
-
-document.body.appendChild(script);
+        // Show final results
+        function showResults() {
+            // Calculate total time taken
+            const endTime = new Date();
+            totalTime = Math.floor((endTime - startTime) / 1000); // in seconds
+            
+            // Calculate total score
+            const totalScore = scores.reduce((sum, score) => sum + score, 0);
+            const maxScore = situations.reduce((sum, situation) => sum + situation.sentences.length, 0);
+            
+            // Display results
+            finalScore.textContent = `Score: ${totalScore}/${maxScore}`;
+            
+            const minutes = Math.floor(totalTime / 60);
+            const seconds = totalTime % 60;
+            timeTaken.textContent = `Time taken: ${minutes} minute${minutes !== 1 ? 's' : ''} and ${seconds} second${seconds !== 1 ? 's' : ''}`;
+            
+            // Add feedback based on score
+            let feedbackText;
+            const scorePercentage = (totalScore / maxScore) * 100;
+            
+            if (scorePercentage >= 90) {
+                feedbackText = "Excellent! You have a great understanding of logical sentence order!";
+            } else if (scorePercentage >= 70) {
+                feedbackText = "Good job! You have a solid grasp of logical sentence ordering.";
+            } else if (scorePercentage >= 50) {
+                feedbackText = "Not bad! Keep practicing to improve your sentence ordering skills.";
+            } else {
+                feedbackText = "Keep practicing! Logical ordering takes time to master.";
+            }
+            
+            feedback.textContent = feedbackText;
+            
+            // Show result screen, hide game screen
+            gameScreen.style.display = 'none';
+            resultScreen.style.display = 'block';
+        }
+        
+        // Initialize the game when the page loads
+        window.addEventListener('load', initGame);
     </script>
 </body>
 </html>
