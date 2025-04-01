@@ -400,44 +400,35 @@
 const script = document.createElement('script');
 script.textContent = `
     // Define examples with correct order
-    const examples = {
-        story1: {
-            title: "Job Application",
-            sentences: [
-                "Excited about the opportunity to contribute to your team",
-                "I am with my background in software development and expertise in Python and Java.",
-                "For your review, I have attached my resume and cover letter.",
-                "I look forward to discussing how my skills align with your requirements.",
-                "Thank you for considering my application for the position."
-            ],
-            completed: false,
-            score: 0
-        },
-        story2: {
-            title: "Making a Sandwich",
-            sentences: [
-                "First, I gathered two slices of bread, cheese, lettuce, and tomato.",
-                "Then, I spread mayonnaise on one slice of bread and mustard on the other.",
-                "Next, I layered the cheese, lettuce, and tomato between the bread slices.",
-                "After that, I cut the sandwich in half diagonally.",
-                "Finally, I placed it on a plate and enjoyed my lunch."
-            ],
-            completed: false,
-            score: 0
-        },
-        story3: {
-            title: "Morning Routine",
-            sentences: [
-                "I wake up at 6 AM every weekday morning.",
-                "After brushing my teeth, I do a quick workout for twenty minutes.",
-                "Then I take a shower and get dressed for work.",
-                "I prepare and eat a healthy breakfast while checking my emails.",
-                "Finally, I grab my bag and head out to catch the 7:30 bus."
-            ],
-            completed: false,
-            score: 0
-        }
-    };
+  const examples = {
+    story1: {
+        title: "Request for Sponsorship",
+        sentences: [
+            "I am reaching out on behalf of TechX Robotics Club, seeking sponsorship for the upcoming National Robotics Championship 2025.",
+            "Our team has consistently excelled in innovation, and your support would help us develop cutting-edge prototypes for the competition.",
+            "In return, we can offer brand visibility through banners, event promotions, and social media campaigns.",
+            "Please let us know if you would be interested in discussing this opportunity further.",
+            "We appreciate your consideration and look forward to the possibility of collaborating with your esteemed organization."
+        ],
+        completed: false,
+        score: 0,
+        completionTime: null // Add this line
+    },
+    story2: {
+        title: "Invitation to an Event",
+        sentences: [
+            "I am excited to invite you to the Tech Conference 2025 on May 5 at The Grand Hall, Mumbai.",
+            "The event will provide networking opportunities with industry leaders.",
+            "You’ll get insights into the latest technological innovations.",
+            "Please let me know if you will be able to attend.",
+            "The presence of yours we look forward to."
+        ],
+        completed: false,
+        score: 0,
+        completionTime: null // Add this line
+    },
+    
+};
 
     let currentExample = "story1";
     let correctOrder = [...examples[currentExample].sentences];
