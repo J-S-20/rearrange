@@ -187,16 +187,37 @@
             margin-top: 5px;
             display: none;
         }
+        
+        .completed-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #dc3545;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Sentence Reordering Game</h1>
         
+        <!-- Already Completed Screen -->
+        <div id="completed-screen" style="display: none;">
+            <div class="completed-message">
+                <h2>You have already completed this exercise</h2>
+                <p>This educational exercise is designed to be taken only once per student.</p>
+                <div id="completed-user-info" class="user-info"></div>
+                <div id="completed-score" class="score"></div>
+            </div>
+        </div>
+        
         <!-- Registration Screen -->
         <div id="registration-screen">
             <div class="instructions">
                 <p>Welcome to the Sentence Reordering Game! Please enter your details to begin.</p>
+                <p><strong>Note:</strong> You can only attempt this exercise once. Your results will be saved.</p>
             </div>
             
             <form id="registration-form">
@@ -263,42 +284,55 @@
         // Game data
         const situations = [
             {
-                title: "Morning Routine",
-                sentences: [
-                    "I wake up early every morning and stretch for five minutes.",
-                    "Then I brush my teeth and take a quick shower to freshen up.",
-                    "After that, I prepare a healthy breakfast with fruits and oatmeal.",
-                    "While eating, I check my emails and plan my day's schedule.",
-                    "Finally, I get dressed, grab my belongings and head out to work."
-                ]
+                title: "Request for Sponsorship",
+        sentences: [
+            "I am reaching out on behalf of TechX Robotics Club, seeking sponsorship for the upcoming National Robotics Championship 2025.",
+            "Our team has consistently excelled in innovation, and your support would help us develop cutting-edge prototypes for the competition.",
+            "In return, we can offer brand visibility through banners, event promotions, and social media campaigns.",
+            "Please let us know if you would be interested in discussing this opportunity further.",
+            "We appreciate your consideration and look forward to the possibility of collaborating with your esteemed organization."
+        ],
             },
             {
-                title: "Planning a Trip",
-                sentences: [
-                    "We decided to visit Paris next summer after saving money for months.",
-                    "My friend researched and booked the flight tickets through a travel agency.",
-                    "I found a charming hotel in the city center near major attractions.",
-                    "We created an itinerary including the Eiffel Tower, Louvre, and local cafes.",
-                    "Everyone is excited about the trip and has started packing their bags."
-                ]
-            }
+                title: "Invitation to an Event",
+        sentences: [
+            "I am excited to invite you to the Tech Conference 2025 on May 5 at The Grand Hall, Mumbai.",
+            "The event will provide networking opportunities with industry leaders.",
+            "You’ll get insights into the latest technological innovations.",
+            "Please let me know if you will be able to attend.",
+            "The presence of yours we look forward to."
+        ],
+            },
+
         ];
 
         // Game variables
         let currentSituation = 0;
         let timeLeft = 90; // 1:30 minutes in seconds
         let timer;
-        let scores = [0, 0];
+        let scores = [];
         let startTime;
         let totalTime = 0;
-        let hasChecked = [false, false];
+        let hasChecked = [];
         let userData = {
             name: "",
             roll: "",
-            department: ""
+            department: "",
+            completed: false,
+            totalScore: 0,
+            maxScore: 0
         };
         
+        // Set up initial scores and checked status arrays
+        for (let i = 0; i < situations.length; i++) {
+            scores.push(0);
+            hasChecked.push(false);
+        }
+        
         // DOM elements
+        const completedScreen = document.getElementById('completed-screen');
+        const completedUserInfo = document.getElementById('completed-user-info');
+        const completedScore = document.getElementById('completed-score');
         const registrationScreen = document.getElementById('registration-screen');
         const registrationForm = document.getElementById('registration-form');
         const gameScreen = document.getElementById('game-screen');
@@ -313,6 +347,9 @@
         const feedback = document.getElementById('feedback');
         const userInfoDisplay = document.getElementById('user-info-display');
         const resultUserInfo = document.getElementById('result-user-info');
+        
+        // Check if the game has already been completed
+        checkGameStatus();
         
         // Initialize the registration form
         registrationForm.addEventListener('submit', function(e) {
@@ -358,6 +395,9 @@
                 userData.roll = rollInput.value.trim();
                 userData.department = departmentInput.value.trim();
                 
+                // Save initial user data to localStorage
+                saveGameState();
+                
                 // Display user info
                 displayUserInfo();
                 
@@ -369,6 +409,51 @@
                 initGame();
             }
         });
+        
+        // Check if the game has already been completed
+        function checkGameStatus() {
+            // Try to load saved game state
+            const savedData = localStorage.getItem('sentenceGame_' + getUniqueIdentifier());
+            
+            if (savedData) {
+                const parsedData = JSON.parse(savedData);
+                
+                // If the game was completed, show completed screen
+                if (parsedData.completed) {
+                    userData = parsedData;
+                    
+                    // Display user info on completed screen
+                    const userInfoHTML = `
+                        <strong>Name:</strong> ${userData.name} | 
+                        <strong>Roll Number:</strong> ${userData.roll} | 
+                        <strong>Department:</strong> ${userData.department}
+                    `;
+                    
+                    completedUserInfo.innerHTML = userInfoHTML;
+                    completedScore.textContent = `Your Score: ${userData.totalScore}/${userData.maxScore}`;
+                    
+                    // Show completed screen, hide others
+                    completedScreen.style.display = 'block';
+                    registrationScreen.style.display = 'none';
+                    gameScreen.style.display = 'none';
+                    resultScreen.style.display = 'none';
+                }
+            }
+        }
+        
+        // Generate a unique identifier based on user data
+        function getUniqueIdentifier() {
+            if (userData.roll) {
+                return userData.roll.toLowerCase().replace(/\s+/g, '');
+            } else {
+                return 'defaultUser';
+            }
+        }
+        
+        // Save game state to localStorage
+        function saveGameState() {
+            localStorage.setItem('sentenceGame_' + getUniqueIdentifier(), JSON.stringify(userData));
+        }
         
         // Display user information
         function displayUserInfo() {
@@ -518,6 +603,9 @@
             scores[currentSituation] = correctCount;
             hasChecked[currentSituation] = true;
             
+            // Save progress
+            saveGameState();
+            
             // Show next button or results
             checkBtn.style.display = 'none';
             
@@ -552,6 +640,14 @@
             const totalScore = scores.reduce((sum, score) => sum + score, 0);
             const maxScore = situations.reduce((sum, situation) => sum + situation.sentences.length, 0);
             
+            // Update user data
+            userData.completed = true;
+            userData.totalScore = totalScore;
+            userData.maxScore = maxScore;
+            
+            // Save final results
+            saveGameState();
+            
             // Display results
             finalScore.textContent = `Score: ${totalScore}/${maxScore}`;
             
@@ -579,6 +675,14 @@
             gameScreen.style.display = 'none';
             resultScreen.style.display = 'block';
         }
+        
+        // Handle page refresh/reload
+        window.addEventListener('beforeunload', function() {
+            // If game is in progress but not completed, save current state
+            if (!userData.completed && userData.name) {
+                saveGameState();
+            }
+        });
     </script>
 </body>
 </html>
