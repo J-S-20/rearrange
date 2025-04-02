@@ -350,7 +350,7 @@
         const db = firebase.firestore();
         
         // Game Variables
-        const situations = [
+        const allSituations = [
     {
         id: 1,
         title: "Situation 1: Requesting a Meeting via Email",
@@ -363,8 +363,8 @@
         ],
         correctOrder: [0, 1, 2, 3, 4]
     },
-            {
-                id: 2,
+    {
+        id: 2,
         title: "Situation 2: Declining a Request for an Extension",
         sentences: [
             "We completely understand the challenges involved and acknowledge your efforts.",
@@ -374,8 +374,224 @@
             "If any additional support is needed, please do not hesitate to reach out."
         ],
         correctOrder: [0, 1, 3, 2, 4]
-            }
-        ];
+    },
+    {
+        id: 3,
+        title: "Situation 3: Handling a Customer Complaint",
+        sentences: [
+            "We sincerely apologize for the inconvenience you've experienced with our product.",
+            "We understand your frustration and take full responsibility for this issue.",
+            "Our team is investigating the matter to identify what went wrong.",
+            "We'll implement measures to ensure this doesn't happen again in the future.",
+            "As compensation, we'd like to offer you a refund or replacement at your convenience."
+        ],
+        correctOrder: [1, 0, 2, 3, 4]
+    },
+    {
+        id: 4,
+        title: "Situation 4: Giving Feedback to a Team Member",
+        sentences: [
+            "I've noticed your consistent effort and dedication on our recent project.",
+            "Your contribution in the client presentation was particularly impressive.",
+            "One area where you might consider developing further is time management.",
+            "Setting clearer priorities could help you deliver even better results.",
+            "I'm here to support your growth and would be happy to discuss strategies."
+        ],
+        correctOrder: [0, 1, 2, 3, 4]
+    },
+    {
+        id: 5,
+        title: "Situation 5: Writing a Project Update",
+        sentences: [
+            "We've completed phase one of the project according to our timeline.",
+            "Several key milestones were achieved, including the database migration.",
+            "We did encounter some challenges with the user interface implementation.",
+            "Our team has developed solutions to address these obstacles effectively.",
+            "We remain on track to deliver the final product by the expected deadline."
+        ],
+        correctOrder: [0, 1, 2, 3, 4]
+    },
+    {
+        id: 6,
+        title: "Situation 6: Introducing a New Policy",
+        sentences: [
+            "Our organization is committed to improving workplace efficiency and satisfaction.",
+            "After careful consideration, we're implementing a flexible working hours policy.",
+            "Starting next month, employees can choose to work between 7 AM and 7 PM.",
+            "Core hours from 10 AM to 3 PM will remain mandatory for all team members.",
+            "We believe this change will enhance productivity while supporting work-life balance."
+        ],
+        correctOrder: [0, 1, 2, 3, 4]
+    },
+    {
+        id: 7,
+        title: "Situation 7: Explaining a Technical Process",
+        sentences: [
+            "The first step in debugging this error involves checking your system configuration.",
+            "Next, you should verify that all required dependencies are properly installed.",
+            "Common issues often stem from outdated package versions or conflicting libraries.",
+            "Running our diagnostic tool can help identify the specific source of the problem.",
+            "Once identified, follow our documentation to implement the appropriate solution."
+        ],
+        correctOrder: [0, 1, 2, 3, 4]
+    },
+    {
+        id: 8,
+        title: "Situation 8: Responding to a Job Application",
+        sentences: [
+            "Thank you for your interest in the Marketing Specialist position at our company.",
+            "We were impressed by your qualifications and experience in digital marketing.",
+            "After careful review, we would like to invite you for an interview next week.",
+            "Please let us know your availability between Monday and Wednesday.",
+            "We look forward to discussing your potential contributions to our team."
+        ],
+        correctOrder: [0, 1, 2, 3, 4]
+    },
+    {
+        id: 9,
+        title: "Situation 9: Making a Product Recommendation",
+        sentences: [
+            "Based on your requirements, I believe our Premium Suite would be the best fit.",
+            "This package includes all the features you mentioned as priorities.",
+            "Additionally, it offers advanced analytics that your team would find valuable.",
+            "The cost is within your specified budget range with our current promotion.",
+            "I can arrange a demonstration to show you these capabilities in action."
+        ],
+        correctOrder: [0, 1, 2, 3, 4]
+    },
+    {
+        id: 10,
+        title: "Situation 10: Explaining a Change in Plans",
+        sentences: [
+            "I regret to inform you that we need to reschedule our planned meeting.",
+            "An unexpected situation has arisen that requires immediate attention.",
+            "I apologize for any inconvenience this change may cause you.",
+            "I propose we move our discussion to next Tuesday at the same time.",
+            "Please let me know if this alternative works for your schedule."
+        ],
+        correctOrder: [0, 1, 2, 3, 4]
+    },
+    {
+        id: 11,
+        title: "Situation 11: Writing a Thank You Note",
+        sentences: [
+            "I wanted to express my sincere gratitude for your help with the project.",
+            "Your expertise and guidance were instrumental in overcoming key challenges.",
+            "The insights you shared will continue to benefit our team going forward.",
+            "It's truly appreciated how you went above and beyond your responsibilities.",
+            "I hope we'll have the opportunity to collaborate again in the future."
+        ],
+        correctOrder: [0, 1, 2, 3, 4]
+    },
+    {
+        id: 12,
+        title: "Situation 12: Requesting Information",
+        sentences: [
+            "I'm writing regarding the upcoming conference that your organization is hosting.",
+            "Our team is interested in attending and would like some additional details.",
+            "Specifically, we're curious about registration deadlines and participation fees.",
+            "Also, could you provide information about accommodation options near the venue?",
+            "We appreciate your assistance and look forward to your response."
+        ],
+        correctOrder: [0, 1, 2, 3, 4]
+    },
+    {
+        id: 13,
+        title: "Situation 13: Explaining a Delay",
+        sentences: [
+            "I'm writing to inform you about a delay in delivering our scheduled shipment.",
+            "Severe weather conditions have disrupted our transportation network.",
+            "Our logistics team is working diligently to minimize the impact of this situation.",
+            "We currently estimate that delivery will be completed by next Thursday.",
+            "We sincerely apologize for this inconvenience and appreciate your understanding."
+        ],
+        correctOrder: [0, 1, 2, 3, 4]
+    },
+    {
+        id: 14,
+        title: "Situation 14: Proposing a Solution",
+        sentences: [
+            "I've analyzed the recurring issue with our customer notification system.",
+            "The root cause appears to be outdated database synchronization protocols.",
+            "Implementing a real-time data processing framework would resolve this problem.",
+            "This solution would require minimal downtime and provide long-term stability.",
+            "With your approval, we can begin implementation by the end of this week."
+        ],
+        correctOrder: [0, 1, 2, 3, 4]
+    },
+    {
+        id: 15,
+        title: "Situation 15: Providing Instructions",
+        sentences: [
+            "To access your new account, first navigate to our company portal.",
+            "Click on the 'Account Activation' button at the top right corner.",
+            "Enter the verification code that was sent to your registered email.",
+            "Complete your profile by providing the requested information.",
+            "After submission, you'll receive confirmation and can begin using our services."
+        ],
+        correctOrder: [0, 1, 2, 3, 4]
+    },
+    {
+        id: 16,
+        title: "Situation 16: Making a Formal Announcement",
+        sentences: [
+            "We are pleased to announce the appointment of Sarah Chen as our new CEO.",
+            "Sarah brings over 20 years of industry experience and visionary leadership.",
+            "She will officially assume her responsibilities starting next month.",
+            "During this transition period, our current leadership team will provide support.",
+            "We're confident that under Sarah's guidance, our company will continue to thrive."
+        ],
+        correctOrder: [0, 1, 2, 3, 4]
+    },
+    {
+        id: 17,
+        title: "Situation 17: Requesting Feedback",
+        sentences: [
+            "We value your recent experience with our customer service department.",
+            "Your insights would be invaluable in helping us improve our service quality.",
+            "We'd appreciate if you could complete our brief satisfaction survey.",
+            "The survey should take no more than five minutes of your time.",
+            "As a token of appreciation, we'll enter you into our monthly gift card drawing."
+        ],
+        correctOrder: [0, 1, 2, 3, 4]
+    },
+    {
+        id: 18,
+        title: "Situation 18: Responding to an Inquiry",
+        sentences: [
+            "Thank you for your interest in our graduate program in Computer Science.",
+            "Regarding your question about admission requirements, we require a bachelor's degree.",
+            "Applicants should also have a minimum GPA of 3.0 and GRE scores above 310.",
+            "Additionally, we look for relevant work experience or research in the field.",
+            "I've attached our detailed brochure with complete information for your reference."
+        ],
+        correctOrder: [0, 1, 2, 3, 4]
+    },
+    {
+        id: 19,
+        title: "Situation 19: Writing a Progress Report",
+        sentences: [
+            "I'm pleased to report significant progress on the website redesign project.",
+            "The UX team has completed user research and finalized the navigation structure.",
+            "Our designers have created mockups for key pages that await your review.",
+            "The development team has begun building the framework for the new site.",
+            "We remain on schedule to launch the redesigned website next quarter."
+        ],
+        correctOrder: [0, 1, 2, 3, 4]
+    },
+    {
+        id: 20,
+        title: "Situation 20: Explaining a New Feature",
+        sentences: [
+            "We're excited to introduce our new automated backup feature.",
+            "This functionality ensures your data is securely saved every 30 minutes.",
+            "You can access previous versions of your work from the 'History' tab.",
+            "Backups are encrypted and stored in our cloud for 90 days.",
+            "To enable this feature, simply toggle the 'Auto-Backup' switch in settings."
+        ],
+        correctOrder: [0, 1, 2, 3, 4]
+    }
+];
         
         let currentStudent = {
             name: "",
@@ -420,39 +636,51 @@
         }
         
         // Handle Registration
-        async function handleRegistration(e) {
-            e.preventDefault();
-            
-            const name = document.getElementById("name").value.trim();
-            const roll = document.getElementById("roll").value.trim();
-            const department = document.getElementById("department").value;
-            
-            if (!name || !roll || !department) {
-                alert("Please fill in all fields");
-                return;
-            }
-            
-            // Check if student has already taken the assessment
-            const exists = await checkStudentExists(roll);
-            if (exists) {
-                alert("You have already completed this assessment and cannot retake it.");
-                return;
-            }
-            
-            // Save student information
-            currentStudent.name = name;
-            currentStudent.roll = roll;
-            currentStudent.department = department;
-            currentStudent.startTime = new Date();
-            
-            // Start game
-            registrationSection.classList.add("hidden");
-            gameSection.classList.remove("hidden");
-            
-            // Load first situation
-            loadSituation(0);
-            startTimer();
-        }
+        // Handle Registration
+// This is the fix for the handleRegistration function
+
+async function handleRegistration(e) {
+    e.preventDefault();
+    
+    const name = document.getElementById("name").value.trim();
+    const roll = document.getElementById("roll").value.trim();
+    const department = document.getElementById("department").value;
+    
+    if (!name || !roll || !department) {
+        alert("Please fill in all fields");
+        return;
+    }
+    
+    // Check if student has already taken the assessment
+    const exists = await checkStudentExists(roll);
+    if (exists) {
+        alert("You have already completed this assessment and cannot retake it.");
+        return;
+    }
+    
+    // Save student information
+    currentStudent.name = name;
+    currentStudent.roll = roll;
+    currentStudent.department = department;
+    currentStudent.startTime = new Date();
+    
+    // Here's the fix: We're selecting random situations from the allSituations array
+    // The original code was trying to rename situations to allSituations and then 
+    // reassign situations, which causes a reference error
+    const selectedSituations = getRandomSituations(allSituations, 2);
+    situations = selectedSituations; // Now set the global situations variable
+    
+    // Start game
+    registrationSection.classList.add("hidden");
+    gameSection.classList.remove("hidden");
+    
+    // Update progress indicator for dynamic number of situations
+    updateProgressIndicator();
+    
+    // Load first situation
+    loadSituation(0);
+    startTimer();
+}
         
         // Load Situation
         function loadSituation(index) {
@@ -567,64 +795,84 @@
         }
         
         // Check Answers and Continue
-        function checkAndContinue() {
-            clearInterval(timerInterval);
-            
-            // Calculate score for current situation
-            const userOrder = Array.from(sentenceList.querySelectorAll(".sentence-item"))
-                .map(item => parseInt(item.dataset.index));
-            
-            const correctOrder = situations[currentSituation].correctOrder;
-            let score = 0;
-            let correctCount = 0;
-            
-            for (let i = 0; i < userOrder.length; i++) {
-                if (userOrder[i] === correctOrder[i]) {
-                    correctCount++;
-                }
-            }
-            
-            score = Math.floor((correctCount / userOrder.length) * 100);
-            
-            // Save result for current situation
-            currentStudent.situationResults.push({
-                situation: currentSituation + 1,
-                score: score,
-                timeTaken: 90 - timeRemaining,
-                userOrder: userOrder,
-                correctOrder: correctOrder
-            });
-            
-            // Update total time taken
-            currentStudent.totalTimeTaken += (90 - timeRemaining);
-            
-            // Move to next situation or results
-            if (currentSituation < situations.length - 1) {
-                currentSituation++;
-                loadSituation(currentSituation);
-                startTimer();
-            } else {
-                showResults();
-            }
+       // Check Answers and Continue
+       function checkAndContinue() {
+    clearInterval(timerInterval);
+    
+    // Calculate score for current situation
+    const userOrder = Array.from(sentenceList.querySelectorAll(".sentence-item"))
+        .map(item => parseInt(item.dataset.index));
+    
+    const correctOrder = situations[currentSituation].correctOrder;
+    let score = 0;
+    let correctCount = 0;
+    
+    for (let i = 0; i < userOrder.length; i++) {
+        if (userOrder[i] === correctOrder[i]) {
+            correctCount++;
         }
+    }
+    
+    score = Math.floor((correctCount / userOrder.length) * 100);
+    
+    // Save result for current situation
+    currentStudent.situationResults.push({
+        situation: situations[currentSituation].id,
+        situationTitle: situations[currentSituation].title,
+        score: score,
+        timeTaken: 90 - timeRemaining,
+        userOrder: userOrder,
+        correctOrder: correctOrder
+    });
+    
+    // Update total time taken
+    currentStudent.totalTimeTaken += (90 - timeRemaining);
+    
+    // Move to next situation or results
+    if (currentSituation < situations.length - 1) {
+        currentSituation++;
+        loadSituation(currentSituation);
+        startTimer();
+        
+        // Update progress indicator
+        document.querySelectorAll(".step").forEach((step, index) => {
+            if (index === currentSituation) {
+                step.classList.add("active");
+            } else if (index < currentSituation) {
+                step.classList.add("completed");
+                step.classList.remove("active");
+            }
+        });
+    } else {
+        showResults();
+    }
+}
         
         // Show Results
         async function showResults() {
-            // Calculate overall score
-            let totalScore = 0;
-            currentStudent.situationResults.forEach(result => {
-                totalScore += result.score;
-            });
-            
-            currentStudent.overallScore = Math.floor(totalScore / situations.length);
-            
-            // Update UI
-            gameSection.classList.add("hidden");
-            resultsSection.classList.remove("hidden");
-            document.getElementById("situation-2-step").classList.add("completed");
-            document.getElementById("results-step").classList.add("active");
-            
-            document.getElementById("final-score").textContent = `${currentStudent.overallScore}%`;
+    // Calculate overall score
+    let totalScore = 0;
+    currentStudent.situationResults.forEach(result => {
+        totalScore += result.score;
+    });
+    
+    currentStudent.overallScore = Math.floor(totalScore / situations.length);
+    
+    // Update UI
+    gameSection.classList.add("hidden");
+    resultsSection.classList.remove("hidden");
+    
+    // Update progress indicator - mark all situation steps as completed
+    document.querySelectorAll(".step").forEach((step, index) => {
+        if (index < situations.length) {
+            step.classList.add("completed");
+            step.classList.remove("active");
+        } else if (index === situations.length) {
+            step.classList.add("active"); // Results step
+        }
+    });
+    
+    document.getElementById("final-score").textContent = `${currentStudent.overallScore}%`;
             
             // Set feedback message
             const feedbackMessage = document.getElementById("feedback-message");
@@ -688,6 +936,38 @@
             }
             return array;
         }
+
+        // Utility function to get random situations
+function getRandomSituations(allSituations, count) {
+    // Make a copy of the array to avoid modifying the original
+    const situationsCopy = [...allSituations];
+    // Shuffle the situations
+    shuffleArray(situationsCopy);
+    // Return the first 'count' situations
+    return situationsCopy.slice(0, count);
+} 
+
+// Function to update the progress indicator
+function updateProgressIndicator() {
+    const progressIndicator = document.querySelector('.progress-indicator');
+    progressIndicator.innerHTML = '';
+    
+    // Create step elements for each situation plus results
+    for (let i = 0; i < situations.length; i++) {
+        const step = document.createElement('div');
+        step.className = i === 0 ? 'step active' : 'step';
+        step.id = `situation-${i+1}-step`;
+        step.textContent = `Situation ${i+1}`;
+        progressIndicator.appendChild(step);
+    }
+    
+    // Add results step
+    const resultsStep = document.createElement('div');
+    resultsStep.className = 'step';
+    resultsStep.id = 'results-step';
+    resultsStep.textContent = 'Results';
+    progressIndicator.appendChild(resultsStep);
+}
     </script>
 </body>
 </html>
