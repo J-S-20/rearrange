@@ -4,26 +4,158 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sentence Reordering Game</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <style>
-        body {
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3a0ca3;
+            --accent-color: #f72585;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --error-color: #e74c3c;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
-            color: #333;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark-color);
+            line-height: 1.6;
         }
         
         .container {
-            background-color: white;
-            border-radius: 10px;
+            max-width: 800px;
+            margin: 0 auto;
             padding: 20px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
         
-        h1 {
-            color: #2c3e50;
+        .header {
             text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            color: #666;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+        
+        .btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+        
+        .timer {
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+        
+        .sentence-list {
+            list-style-type: none;
+            margin-bottom: 20px;
+        }
+        
+        .sentence-item {
+            background-color: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 2px solid #eee;
+            cursor: move;
+            transition: all 0.2s;
+        }
+        
+        .sentence-item:hover {
+            background-color: #e9ecef;
+            border-color: var(--primary-color);
+        }
+        
+        .sentence-item.dragging {
+            opacity: 0.5;
+            border: 2px dashed var(--primary-color);
         }
         
         .instructions {
@@ -31,658 +163,540 @@
             padding: 15px;
             border-radius: 5px;
             margin-bottom: 20px;
-            border-left: 4px solid #3498db;
+            border-left: 4px solid var(--primary-color);
         }
         
-        .timer {
-            font-size: 1.2rem;
-            text-align: center;
-            margin: 10px 0;
-            color: #e74c3c;
-            font-weight: bold;
+        .instructions h3 {
+            color: var(--secondary-color);
+            margin-bottom: 10px;
         }
         
-        .situation-title {
-            background-color: #3498db;
-            color: white;
-            padding: 8px 15px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-        }
-        
-        .sentences-container {
-            min-height: 300px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 15px;
-            background-color: #f9f9f9;
+        .progress-indicator {
+            display: flex;
+            justify-content: space-between;
             margin-bottom: 20px;
         }
         
-        .sentence {
-            background-color: #3498db;
-            color: white;
-            padding: 12px 15px;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            cursor: move;
-            user-select: none;
-            box-shadow: 0 2px 3px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
-        }
-        
-        .sentence:hover {
-            transform: translateY(-2px);
-        }
-        
-        .sentence.dragging {
-            opacity: 0.5;
-        }
-        
-        button {
-            background-color: #2ecc71;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1rem;
-            margin-top: 20px;
-            transition: background-color 0.3s;
-        }
-        
-        button:hover {
-            background-color: #27ae60;
-        }
-        
-        button:disabled {
-            background-color: #bdc3c7;
-            cursor: not-allowed;
-        }
-        
-        .result {
-            display: none;
+        .step {
+            flex: 1;
             text-align: center;
-            margin-top: 20px;
-            padding: 20px;
-            background-color: #e8f4f8;
-            border-radius: 5px;
-            border: 1px solid #3498db;
-        }
-        
-        .result h2 {
-            color: #2c3e50;
-            margin-bottom: 15px;
-        }
-        
-        .user-info {
-            background-color: #eaf2f8;
             padding: 10px;
+            background-color: #eee;
             border-radius: 5px;
-            margin-bottom: 15px;
-            border-left: 4px solid #3498db;
-            text-align: left;
-        }
-        
-        .score {
-            font-size: 1.8rem;
-            color: #27ae60;
+            margin: 0 5px;
             font-weight: bold;
-            margin: 15px 0;
         }
         
-        .time-taken {
-            font-size: 1.2rem;
-            color: #e67e22;
-            margin-bottom: 15px;
+        .step.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .step.completed {
+            background-color: var(--success-color);
+            color: white;
         }
         
         .feedback {
-            font-weight: bold;
-            margin-top: 15px;
+            text-align: center;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
         }
         
-        .sentence.correct {
-            background-color: #2ecc71;
+        .success {
+            color: var(--success-color);
         }
         
-        .sentence.incorrect {
-            background-color: #e74c3c;
+        .warning {
+            color: var(--warning-color);
         }
         
-        /* Registration Form Styles */
-        #registration-screen {
+        .error {
+            color: var(--error-color);
+        }
+        
+        .results {
             text-align: center;
         }
         
-        .form-group {
-            margin-bottom: 15px;
-            text-align: left;
+        .results-title {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: var(--secondary-color);
         }
         
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
+        .score {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+        
+        .score-value {
             font-weight: bold;
-            color: #2c3e50;
+            font-size: 2rem;
+            color: var(--primary-color);
         }
         
-        .form-group input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
+        .feedback-message {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            padding: 15px;
             border-radius: 5px;
-            font-size: 16px;
         }
         
-        .form-group input:focus {
-            border-color: #3498db;
-            outline: none;
-            box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
-        }
-        
-        .error-message {
-            color: #e74c3c;
-            font-size: 14px;
-            margin-top: 5px;
+        .hidden {
             display: none;
         }
         
-        .completed-message {
-            background-color: #f8d7da;
-            color: #721c24;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 20px 0;
-            border-left: 4px solid #dc3545;
-            text-align: center;
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .card {
+                padding: 20px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Sentence Reordering Game</h1>
-        
-        <!-- Already Completed Screen -->
-        <div id="completed-screen" style="display: none;">
-            <div class="completed-message">
-                <h2>You have already completed this exercise</h2>
-                <p>This educational exercise is designed to be taken only once per student.</p>
-                <div id="completed-user-info" class="user-info"></div>
-                <div id="completed-score" class="score"></div>
-            </div>
+        <div class="header">
+            <h1>Sentence Reordering Game</h1>
+            <p>Arrange sentences in logical order to improve your comprehension skills</p>
         </div>
         
-        <!-- Registration Screen -->
-        <div id="registration-screen">
-            <div class="instructions">
-                <p>Welcome to the Sentence Reordering Game! Please enter your details to begin.</p>
-                <p><strong>Note:</strong> You can only attempt this exercise once. Your results will be saved.</p>
-            </div>
-            
+        <div id="registration-section" class="card">
+            <h2 class="section-title">Student Registration</h2>
             <form id="registration-form">
                 <div class="form-group">
-                    <label for="name">Full Name:</label>
-                    <input type="text" id="name" name="name" required>
-                    <div class="error-message" id="name-error">Please enter your name</div>
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" class="form-control" required>
                 </div>
-                
                 <div class="form-group">
-                    <label for="roll">Roll Number:</label>
-                    <input type="text" id="roll" name="roll" required>
-                    <div class="error-message" id="roll-error">Please enter your roll number</div>
+                    <label for="roll">Roll Number</label>
+                    <input type="text" id="roll" class="form-control" required>
                 </div>
-                
                 <div class="form-group">
-                    <label for="department">Department:</label>
-                    <input type="text" id="department" name="department" required>
-                    <div class="error-message" id="department-error">Please enter your department</div>
+                    <label for="department">Department</label>
+                    <select id="department" class="form-control" required>
+                        <option value="">Select Department</option>
+                        <option value="Computer Science">Computer Science</option>
+                        <option value="Engineering">Engineering</option>
+                        <option value="Mathematics">Mathematics</option>
+                        <option value="Physics">Physics</option>
+                        <option value="Biology">Biology</option>
+                        <option value="Chemistry">Chemistry</option>
+                        <option value="Literature">Literature</option>
+                        <option value="Other">Other</option>
+                    </select>
                 </div>
-                
-                <button type="submit" id="start-btn">Start Game</button>
+                <button type="submit" class="btn btn-block">Start Game</button>
             </form>
         </div>
         
-        <!-- Game Screen (initially hidden) -->
-        <div id="game-screen" style="display: none;">
-            <div class="instructions">
-                <p>Drag and drop the sentences to arrange them in the correct order. You have 1:30 minutes for each situation.</p>
-                <p>Once you finish a situation, click the "Check Answers" button to see your score.</p>
-                <p>You can only attempt each question once. Good luck!</p>
+        <div id="game-section" class="hidden">
+            <div class="progress-indicator">
+                <div class="step active" id="situation-1-step">Situation 1</div>
+                <div class="step" id="situation-2-step">Situation 2</div>
+                <div class="step" id="results-step">Results</div>
             </div>
             
-            <div class="user-info" id="user-info-display">
-                <!-- User details will be displayed here -->
+            <div class="card">
+                <div class="timer" id="timer">Time Remaining: 01:30</div>
+                
+                <div class="instructions">
+                    <h3>Instructions:</h3>
+                    <p>Drag and drop the sentences to arrange them in a logical order. You have 1:30 minutes to complete each situation.</p>
+                </div>
+                
+                <h2 class="section-title" id="situation-title">Situation 1: The Scientific Method</h2>
+                
+                <ul class="sentence-list" id="sentence-list"></ul>
+                
+                <button id="submit-btn" class="btn btn-block">Submit Answers</button>
             </div>
-            
-            <div class="timer" id="timer">Time remaining: 1:30</div>
-            <div class="situation-title" id="situation-title">Situation 1</div>
-            
-            <div id="sentences-container" class="sentences-container">
-                <!-- Sentences will be dynamically added here -->
-            </div>
-            
-            <button id="check-btn">Check Answers</button>
-            <button id="next-btn" style="display: none;">Next Situation</button>
         </div>
         
-        <!-- Result Screen (initially hidden) -->
-        <div id="result-screen" class="result">
-            <h2>Game Complete!</h2>
-            
-            <div class="user-info" id="result-user-info">
-                <!-- User details will be displayed here -->
+        <div id="results-section" class="hidden">
+            <div class="card results">
+                <h2 class="results-title">Assessment Results</h2>
+                
+                <div class="score">
+                    Your Score: <span class="score-value" id="final-score"></span>
+                </div>
+                
+                <div class="feedback-message" id="feedback-message"></div>
+                
+                <div>
+                    <p>Time Taken: <span id="total-time"></span></p>
+                    <p>Completed on: <span id="completion-date"></span></p>
+                </div>
+                
+                <div style="margin-top: 30px;">
+                    <p>Your assessment has been saved. You cannot retake this assessment.</p>
+                </div>
             </div>
-            
-            <div class="score" id="final-score">Score: 0/10</div>
-            <div class="time-taken" id="time-taken">Time taken: 0 minutes and 0 seconds</div>
-            <div class="feedback" id="feedback"></div>
         </div>
     </div>
 
     <script>
-        // Game data
+        // Initialize Firebase
+        const firebaseConfig = {
+    apiKey: "AIzaSyDXf5DooFzNB24KzvupGiL2iL8WvhcWE8Y",
+    authDomain: "mail-reordering-game.firebaseapp.com",
+    projectId: "mail-reordering-game",
+    storageBucket: "mail-reordering-game.firebasestorage.app",
+    messagingSenderId: "509000994429",
+    appId: "1:509000994429:web:6159aed7e6b67fd2feab14",
+    measurementId: "G-H2NTTPRWR6"
+  };
+        
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        // Game Variables
         const situations = [
             {
-                title: "Request for Sponsorship",
-        sentences: [
-            "I am reaching out on behalf of TechX Robotics Club, seeking sponsorship for the upcoming National Robotics Championship 2025.",
-            "Our team has consistently excelled in innovation, and your support would help us develop cutting-edge prototypes for the competition.",
-            "In return, we can offer brand visibility through banners, event promotions, and social media campaigns.",
-            "Please let us know if you would be interested in discussing this opportunity further.",
-            "We appreciate your consideration and look forward to the possibility of collaborating with your esteemed organization."
-        ],
+                id: 1,
+                title: "Situation 1: The Scientific Method",
+                sentences: [
+                    "Scientists begin by making observations about the natural world.",
+                    "Based on observations, they formulate a hypothesis - a testable explanation.",
+                    "Experiments are designed and conducted to test the hypothesis.",
+                    "Data is collected and analyzed to determine if it supports the hypothesis.",
+                    "Conclusions are drawn, and the hypothesis is either supported, modified, or rejected."
+                ],
+                correctOrder: [0, 1, 2, 3, 4]
             },
             {
-                title: "Invitation to an Event",
-        sentences: [
-            "I am excited to invite you to the Tech Conference 2025 on May 5 at The Grand Hall, Mumbai.",
-            "The event will provide networking opportunities with industry leaders.",
-            "You’ll get insights into the latest technological innovations.",
-            "Please let me know if you will be able to attend.",
-            "The presence of yours we look forward to."
-        ],
-            },
-
+                id: 2,
+                title: "Situation 2: The Water Cycle",
+                sentences: [
+                    "Water from oceans, lakes, and rivers evaporates due to the sun's heat.",
+                    "The water vapor rises into the atmosphere and cools, forming clouds through condensation.",
+                    "When the water droplets in clouds become heavy enough, they fall as precipitation.",
+                    "Rain and melted snow flow back into bodies of water or seep into the ground.",
+                    "Groundwater eventually returns to oceans, completing the cycle."
+                ],
+                correctOrder: [0, 1, 2, 3, 4]
+            }
         ];
-
-        // Game variables
-        let currentSituation = 0;
-        let timeLeft = 90; // 1:30 minutes in seconds
-        let timer;
-        let scores = [];
-        let startTime;
-        let totalTime = 0;
-        let hasChecked = [];
-        let userData = {
+        
+        let currentStudent = {
             name: "",
             roll: "",
             department: "",
-            completed: false,
-            totalScore: 0,
-            maxScore: 0
+            startTime: null,
+            totalTimeTaken: 0,
+            situationResults: [],
+            overallScore: 0
         };
         
-        // Set up initial scores and checked status arrays
-        for (let i = 0; i < situations.length; i++) {
-            scores.push(0);
-            hasChecked.push(false);
+        let currentSituation = 0;
+        let timerInterval;
+        let timeRemaining = 90; // 1:30 minutes in seconds
+        let draggedItem = null;
+        
+        // Elements
+        const registrationSection = document.getElementById("registration-section");
+        const gameSection = document.getElementById("game-section");
+        const resultsSection = document.getElementById("results-section");
+        const registrationForm = document.getElementById("registration-form");
+        const sentenceList = document.getElementById("sentence-list");
+        const situationTitle = document.getElementById("situation-title");
+        const timerElement = document.getElementById("timer");
+        const submitBtn = document.getElementById("submit-btn");
+        
+        // Event Listeners
+        registrationForm.addEventListener("submit", handleRegistration);
+        submitBtn.addEventListener("submit", checkAndContinue);
+        submitBtn.addEventListener("click", checkAndContinue);
+        
+        // Check if student has already completed the game
+        async function checkStudentExists(roll) {
+            try {
+                const studentRef = db.collection("students").doc(roll);
+                const doc = await studentRef.get();
+                return doc.exists;
+            } catch (error) {
+                console.error("Error checking student:", error);
+                return false;
+            }
         }
         
-        // DOM elements
-        const completedScreen = document.getElementById('completed-screen');
-        const completedUserInfo = document.getElementById('completed-user-info');
-        const completedScore = document.getElementById('completed-score');
-        const registrationScreen = document.getElementById('registration-screen');
-        const registrationForm = document.getElementById('registration-form');
-        const gameScreen = document.getElementById('game-screen');
-        const resultScreen = document.getElementById('result-screen');
-        const timerElement = document.getElementById('timer');
-        const situationTitle = document.getElementById('situation-title');
-        const sentencesContainer = document.getElementById('sentences-container');
-        const checkBtn = document.getElementById('check-btn');
-        const nextBtn = document.getElementById('next-btn');
-        const finalScore = document.getElementById('final-score');
-        const timeTaken = document.getElementById('time-taken');
-        const feedback = document.getElementById('feedback');
-        const userInfoDisplay = document.getElementById('user-info-display');
-        const resultUserInfo = document.getElementById('result-user-info');
-        
-        // Check if the game has already been completed
-        checkGameStatus();
-        
-        // Initialize the registration form
-        registrationForm.addEventListener('submit', function(e) {
+        // Handle Registration
+        async function handleRegistration(e) {
             e.preventDefault();
             
-            // Validate form
-            let isValid = true;
+            const name = document.getElementById("name").value.trim();
+            const roll = document.getElementById("roll").value.trim();
+            const department = document.getElementById("department").value;
             
-            const nameInput = document.getElementById('name');
-            const rollInput = document.getElementById('roll');
-            const departmentInput = document.getElementById('department');
-            
-            const nameError = document.getElementById('name-error');
-            const rollError = document.getElementById('roll-error');
-            const departmentError = document.getElementById('department-error');
-            
-            // Reset error messages
-            nameError.style.display = 'none';
-            rollError.style.display = 'none';
-            departmentError.style.display = 'none';
-            
-            // Validate name
-            if (!nameInput.value.trim()) {
-                nameError.style.display = 'block';
-                isValid = false;
+            if (!name || !roll || !department) {
+                alert("Please fill in all fields");
+                return;
             }
             
-            // Validate roll number
-            if (!rollInput.value.trim()) {
-                rollError.style.display = 'block';
-                isValid = false;
+            // Check if student has already taken the assessment
+            const exists = await checkStudentExists(roll);
+            if (exists) {
+                alert("You have already completed this assessment and cannot retake it.");
+                return;
             }
             
-            // Validate department
-            if (!departmentInput.value.trim()) {
-                departmentError.style.display = 'block';
-                isValid = false;
-            }
+            // Save student information
+            currentStudent.name = name;
+            currentStudent.roll = roll;
+            currentStudent.department = department;
+            currentStudent.startTime = new Date();
             
-            if (isValid) {
-                // Store user data
-                userData.name = nameInput.value.trim();
-                userData.roll = rollInput.value.trim();
-                userData.department = departmentInput.value.trim();
-                
-                // Save initial user data to localStorage
-                saveGameState();
-                
-                // Display user info
-                displayUserInfo();
-                
-                // Hide registration screen, show game screen
-                registrationScreen.style.display = 'none';
-                gameScreen.style.display = 'block';
-                
-                // Start the game
-                initGame();
-            }
-        });
-        
-        // Check if the game has already been completed
-        function checkGameStatus() {
-            // Try to load saved game state
-            const savedData = localStorage.getItem('sentenceGame_' + getUniqueIdentifier());
+            // Start game
+            registrationSection.classList.add("hidden");
+            gameSection.classList.remove("hidden");
             
-            if (savedData) {
-                const parsedData = JSON.parse(savedData);
-                
-                // If the game was completed, show completed screen
-                if (parsedData.completed) {
-                    userData = parsedData;
-                    
-                    // Display user info on completed screen
-                    const userInfoHTML = `
-                        <strong>Name:</strong> ${userData.name} | 
-                        <strong>Roll Number:</strong> ${userData.roll} | 
-                        <strong>Department:</strong> ${userData.department}
-                    `;
-                    
-                    completedUserInfo.innerHTML = userInfoHTML;
-                    completedScore.textContent = `Your Score: ${userData.totalScore}/${userData.maxScore}`;
-                    
-                    // Show completed screen, hide others
-                    completedScreen.style.display = 'block';
-                    registrationScreen.style.display = 'none';
-                    gameScreen.style.display = 'none';
-                    resultScreen.style.display = 'none';
-                }
-            }
-        }
-        
-        // Generate a unique identifier based on user data
-        function getUniqueIdentifier() {
-            if (userData.roll) {
-                return userData.roll.toLowerCase().replace(/\s+/g, '');
-            } else {
-                return 'defaultUser';
-            }
-        }
-        
-        // Save game state to localStorage
-        function saveGameState() {
-            localStorage.setItem('sentenceGame_' + getUniqueIdentifier(), JSON.stringify(userData));
-        }
-        
-        // Display user information
-        function displayUserInfo() {
-            const userInfoHTML = `
-                <strong>Name:</strong> ${userData.name} | 
-                <strong>Roll Number:</strong> ${userData.roll} | 
-                <strong>Department:</strong> ${userData.department}
-            `;
-            
-            userInfoDisplay.innerHTML = userInfoHTML;
-            resultUserInfo.innerHTML = userInfoHTML;
-        }
-        
-        // Initialize the game
-        function initGame() {
-            startTime = new Date();
-            loadSituation(currentSituation);
+            // Load first situation
+            loadSituation(0);
             startTimer();
-            
-            checkBtn.addEventListener('click', checkAnswers);
-            nextBtn.addEventListener('click', nextSituation);
         }
         
-        // Load a situation
+        // Load Situation
         function loadSituation(index) {
-            situationTitle.textContent = `Situation ${index + 1}: ${situations[index].title}`;
-            sentencesContainer.innerHTML = '';
+            currentSituation = index;
             
-            // Shuffle sentences and add them to the container
-            const shuffledSentences = [...situations[index].sentences].sort(() => Math.random() - 0.5);
+            // Update progress indicator
+            document.querySelectorAll(".step").forEach(step => step.classList.remove("active"));
+            if (index === 0) {
+                document.getElementById("situation-1-step").classList.add("active");
+            } else if (index === 1) {
+                document.getElementById("situation-1-step").classList.add("completed");
+                document.getElementById("situation-2-step").classList.add("active");
+            }
             
-            shuffledSentences.forEach((sentence, sentenceIndex) => {
-                const sentenceElement = document.createElement('div');
-                sentenceElement.className = 'sentence';
-                sentenceElement.textContent = sentence;
-                sentenceElement.dataset.correctIndex = situations[index].sentences.indexOf(sentence);
-                sentenceElement.dataset.currentIndex = sentenceIndex;
-                sentenceElement.draggable = true;
-                
-                sentenceElement.addEventListener('dragstart', dragStart);
-                sentenceElement.addEventListener('dragend', dragEnd);
-                
-                sentencesContainer.appendChild(sentenceElement);
-            });
-            
-            // Add event listeners for drag and drop
-            sentencesContainer.addEventListener('dragover', dragOver);
-            sentencesContainer.addEventListener('drop', drop);
-        }
-        
-        // Start the timer
-        function startTimer() {
-            timeLeft = 90; // Reset to 1:30
+            // Reset timer
+            timeRemaining = 90;
             updateTimerDisplay();
             
-            clearInterval(timer); // Clear any existing timer
-            timer = setInterval(() => {
-                timeLeft--;
+            // Set situation title
+            situationTitle.textContent = situations[index].title;
+            
+            // Clear sentence list
+            sentenceList.innerHTML = "";
+            
+            // Shuffle sentences
+            const shuffledSentences = [...situations[index].sentences];
+            shuffleArray(shuffledSentences);
+            
+            // Add sentences to list
+            shuffledSentences.forEach((sentence, i) => {
+                const li = document.createElement("li");
+                li.className = "sentence-item";
+                li.textContent = sentence;
+                li.draggable = true;
+                li.dataset.index = situations[index].sentences.indexOf(sentence);
+                
+                // Add drag event listeners
+                li.addEventListener("dragstart", dragStart);
+                li.addEventListener("dragover", dragOver);
+                li.addEventListener("drop", drop);
+                li.addEventListener("dragenter", dragEnter);
+                li.addEventListener("dragleave", dragLeave);
+                li.addEventListener("dragend", dragEnd);
+                
+                sentenceList.appendChild(li);
+            });
+        }
+        
+        // Timer Functions
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeRemaining--;
                 updateTimerDisplay();
                 
-                if (timeLeft <= 0) {
-                    clearInterval(timer);
-                    checkAnswers();
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    checkAndContinue();
                 }
             }, 1000);
         }
         
-        // Update timer display
         function updateTimerDisplay() {
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            timerElement.textContent = `Time remaining: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            timerElement.textContent = `Time Remaining: ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
             
-            if (timeLeft <= 10) {
-                timerElement.style.color = '#e74c3c'; // Red for last 10 seconds
+            if (timeRemaining <= 15) {
+                timerElement.classList.add("error");
             } else {
-                timerElement.style.color = '#2c3e50'; // Normal color
+                timerElement.classList.remove("error");
             }
         }
         
-        // Drag and drop functionality
-        let draggedSentence = null;
-        
-        function dragStart(e) {
-            draggedSentence = this;
-            this.classList.add('dragging');
-            
-            e.dataTransfer.effectAllowed = 'move';
-            e.dataTransfer.setData('text/plain', this.dataset.correctIndex);
+        // Drag and Drop Functions
+        function dragStart() {
+            draggedItem = this;
+            setTimeout(() => this.classList.add("dragging"), 0);
         }
         
-        function dragEnd(e) {
-            this.classList.remove('dragging');
-            draggedSentence = null;
+        function dragEnd() {
+            this.classList.remove("dragging");
+            draggedItem = null;
         }
         
         function dragOver(e) {
             e.preventDefault();
-            e.dataTransfer.dropEffect = 'move';
-            
-            // Find the target sentence
-            const targetSentence = e.target.closest('.sentence');
-            if (!targetSentence || targetSentence === draggedSentence) return;
-            
-            // Get all sentences
-            const sentences = Array.from(sentencesContainer.querySelectorAll('.sentence'));
-            const draggedIndex = sentences.indexOf(draggedSentence);
-            const targetIndex = sentences.indexOf(targetSentence);
-            
-            // Determine if we're moving up or down
-            if (draggedIndex < targetIndex) {
-                sentencesContainer.insertBefore(draggedSentence, targetSentence.nextSibling);
-            } else {
-                sentencesContainer.insertBefore(draggedSentence, targetSentence);
+        }
+        
+        function dragEnter(e) {
+            e.preventDefault();
+            this.classList.add("hovered");
+        }
+        
+        function dragLeave() {
+            this.classList.remove("hovered");
+        }
+        
+        function drop() {
+            this.classList.remove("hovered");
+            if (draggedItem !== this) {
+                const allItems = Array.from(sentenceList.querySelectorAll(".sentence-item"));
+                const draggedIndex = allItems.indexOf(draggedItem);
+                const targetIndex = allItems.indexOf(this);
+                
+                if (draggedIndex < targetIndex) {
+                    this.parentNode.insertBefore(draggedItem, this.nextSibling);
+                } else {
+                    this.parentNode.insertBefore(draggedItem, this);
+                }
             }
         }
         
-        function drop(e) {
-            e.preventDefault();
-            // The actual reordering is done in dragOver
-        }
-        
-        // Check answers
-        function checkAnswers() {
-            clearInterval(timer);
-            
-            if (hasChecked[currentSituation]) return;
+        // Check Answers and Continue
+        function checkAndContinue() {
+            clearInterval(timerInterval);
             
             // Calculate score for current situation
-            const sentences = Array.from(sentencesContainer.querySelectorAll('.sentence'));
+            const userOrder = Array.from(sentenceList.querySelectorAll(".sentence-item"))
+                .map(item => parseInt(item.dataset.index));
+            
+            const correctOrder = situations[currentSituation].correctOrder;
+            let score = 0;
             let correctCount = 0;
             
-            sentences.forEach((sentence, index) => {
-                const correctIndex = parseInt(sentence.dataset.correctIndex);
-                
-                if (correctIndex === index) {
+            for (let i = 0; i < userOrder.length; i++) {
+                if (userOrder[i] === correctOrder[i]) {
                     correctCount++;
-                    sentence.classList.add('correct');
-                } else {
-                    sentence.classList.add('incorrect');
                 }
-                
-                // Disable dragging
-                sentence.draggable = false;
+            }
+            
+            score = Math.floor((correctCount / userOrder.length) * 100);
+            
+            // Save result for current situation
+            currentStudent.situationResults.push({
+                situation: currentSituation + 1,
+                score: score,
+                timeTaken: 90 - timeRemaining,
+                userOrder: userOrder,
+                correctOrder: correctOrder
             });
             
-            scores[currentSituation] = correctCount;
-            hasChecked[currentSituation] = true;
+            // Update total time taken
+            currentStudent.totalTimeTaken += (90 - timeRemaining);
             
-            // Save progress
-            saveGameState();
-            
-            // Show next button or results
-            checkBtn.style.display = 'none';
-            
+            // Move to next situation or results
             if (currentSituation < situations.length - 1) {
-                nextBtn.style.display = 'inline-block';
-            } else {
-                showResults();
-            }
-        }
-        
-        // Move to next situation
-        function nextSituation() {
-            currentSituation++;
-            
-            if (currentSituation < situations.length) {
+                currentSituation++;
                 loadSituation(currentSituation);
                 startTimer();
-                checkBtn.style.display = 'inline-block';
-                nextBtn.style.display = 'none';
             } else {
                 showResults();
             }
         }
         
-        // Show final results
-        function showResults() {
-            // Calculate total time taken
-            const endTime = new Date();
-            totalTime = Math.floor((endTime - startTime) / 1000); // in seconds
+        // Show Results
+        async function showResults() {
+            // Calculate overall score
+            let totalScore = 0;
+            currentStudent.situationResults.forEach(result => {
+                totalScore += result.score;
+            });
             
-            // Calculate total score
-            const totalScore = scores.reduce((sum, score) => sum + score, 0);
-            const maxScore = situations.reduce((sum, situation) => sum + situation.sentences.length, 0);
+            currentStudent.overallScore = Math.floor(totalScore / situations.length);
             
-            // Update user data
-            userData.completed = true;
-            userData.totalScore = totalScore;
-            userData.maxScore = maxScore;
+            // Update UI
+            gameSection.classList.add("hidden");
+            resultsSection.classList.remove("hidden");
+            document.getElementById("situation-2-step").classList.add("completed");
+            document.getElementById("results-step").classList.add("active");
             
-            // Save final results
-            saveGameState();
+            document.getElementById("final-score").textContent = `${currentStudent.overallScore}%`;
             
-            // Display results
-            finalScore.textContent = `Score: ${totalScore}/${maxScore}`;
-            
-            const minutes = Math.floor(totalTime / 60);
-            const seconds = totalTime % 60;
-            timeTaken.textContent = `Time taken: ${minutes} minute${minutes !== 1 ? 's' : ''} and ${seconds} second${seconds !== 1 ? 's' : ''}`;
-            
-            // Add feedback based on score
-            let feedbackText;
-            const scorePercentage = (totalScore / maxScore) * 100;
-            
-            if (scorePercentage >= 90) {
-                feedbackText = "Excellent! You have a great understanding of logical sentence order!";
-            } else if (scorePercentage >= 70) {
-                feedbackText = "Good job! You have a solid grasp of logical sentence ordering.";
-            } else if (scorePercentage >= 50) {
-                feedbackText = "Not bad! Keep practicing to improve your sentence ordering skills.";
+            // Set feedback message
+            const feedbackMessage = document.getElementById("feedback-message");
+            if (currentStudent.overallScore >= 90) {
+                feedbackMessage.textContent = "Excellent! You have a strong understanding of logical sentence ordering.";
+                feedbackMessage.classList.add("success");
+            } else if (currentStudent.overallScore >= 70) {
+                feedbackMessage.textContent = "Good job! You have a solid grasp of sentence ordering with some room for improvement.";
+                feedbackMessage.classList.add("success");
+            } else if (currentStudent.overallScore >= 50) {
+                feedbackMessage.textContent = "Fair effort. You understand the basics but should practice more to improve your skills.";
+                feedbackMessage.classList.add("warning");
             } else {
-                feedbackText = "Keep practicing! Logical ordering takes time to master.";
+                feedbackMessage.textContent = "You need more practice with logical sentence ordering. Focus on identifying sequence markers and context clues.";
+                feedbackMessage.classList.add("error");
             }
             
-            feedback.textContent = feedbackText;
+            // Set time and date
+            const minutes = Math.floor(currentStudent.totalTimeTaken / 60);
+            const seconds = currentStudent.totalTimeTaken % 60;
+            document.getElementById("total-time").textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById("completion-date").textContent = new Date().toLocaleString();
             
-            // Show result screen, hide game screen
-            gameScreen.style.display = 'none';
-            resultScreen.style.display = 'block';
+            // Save to Firebase
+            try {
+                await saveResults();
+            } catch (error) {
+                console.error("Error saving results:", error);
+            }
         }
         
-        // Handle page refresh/reload
-        window.addEventListener('beforeunload', function() {
-            // If game is in progress but not completed, save current state
-            if (!userData.completed && userData.name) {
-                saveGameState();
+        // Save Results to Firebase
+        async function saveResults() {
+            try {
+                const studentData = {
+                    name: currentStudent.name,
+                    roll: currentStudent.roll,
+                    department: currentStudent.department,
+                    startTime: firebase.firestore.Timestamp.fromDate(currentStudent.startTime),
+                    completionTime: firebase.firestore.Timestamp.fromDate(new Date()),
+                    totalTimeTaken: currentStudent.totalTimeTaken,
+                    overallScore: currentStudent.overallScore,
+                    situationResults: currentStudent.situationResults,
+                    completedAt: new Date().toISOString()
+                };
+                
+                // Use roll number as document ID to prevent duplicates
+                await db.collection("students").doc(currentStudent.roll).set(studentData);
+                console.log("Results saved successfully");
+            } catch (error) {
+                console.error("Error saving results:", error);
+                throw error;
             }
-        });
+        }
+        
+        // Utility Functions
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
     </script>
 </body>
 </html>
