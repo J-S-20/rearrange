@@ -352,244 +352,244 @@
         // Game Variables
         const allSituations = [
     {
-        id: 1,
-        title: "Situation 1: Requesting a Meeting via Email",
-        sentences: [
-            "It would be great to have a discussion on this topic at a convenient time.",
-            "I would like to propose a time slot but am open to other suitable options.",
-            "Sharing some key details in advance can help in making the discussion productive.",
-            "Please let me know your availability so we can finalize a time.",
-            "I appreciate your time and look forward to your response."
+        "id": 1,
+        "title": "Situation 1: Requesting Information for a Report",
+        "sentences": [
+            "I'm currently working on the quarterly report that's due next week.",
+            "I need some specific data regarding the recent marketing campaign results.",
+            "Could you please share the conversion rates and customer engagement metrics?",
+            "This information will help me complete the analysis section of the report.",
+            "I would appreciate receiving this by Wednesday to meet our deadline."
         ],
-        correctOrder: [0, 1, 2, 3, 4]
+        "correctOrder": [0, 1, 2, 4, 3]
     },
     {
-        id: 2,
-        title: "Situation 2: Declining a Request for an Extension",
-        sentences: [
-            "We completely understand the challenges involved and acknowledge your efforts.",
-            "However, due to existing constraints, we are unable to accommodate the request.",
-            "Given the timelines, we encourage focusing on priority tasks within the available period.",
-            "We truly appreciate your dedication and regret any difficulty this may cause.",
-            "If any additional support is needed, please do not hesitate to reach out."
+        "id": 2,
+        "title": "Situation 2: Proposing a New Project Idea",
+        "sentences": [
+            "I've been thinking about ways to improve our customer satisfaction scores.",
+            "My proposal involves implementing a new feedback system across all departments.",
+            "This system would collect real-time data and provide actionable insights.",
+            "The initial investment would be offset by improved retention rates.",
+            "Would you be interested in discussing this further at the next team meeting?"
         ],
-        correctOrder: [0, 1, 3, 2, 4]
+        "correctOrder": [0, 1, 2, 3, 4]
     },
     {
-        id: 3,
-        title: "Situation 3: Handling a Customer Complaint",
-        sentences: [
+        "id": 3,
+        "title": "Situation 3: Rescheduling a Client Meeting",
+        "sentences": [
+            "I'm writing regarding our scheduled meeting tomorrow at 2 PM.",
+            "Unfortunately, I need to request a postponement due to an unexpected conflict.",
+            "I sincerely apologize for any inconvenience this may cause.",
+            "Would either Thursday at 11 AM or Friday at 3 PM work for you instead?",
+            "I look forward to your response and appreciate your understanding."
+        ],
+        "correctOrder": [0, 1, 2, 3, 4]
+    },
+    {
+        "id": 4,
+        "title": "Situation 4: Addressing a Customer Complaint",
+        "sentences": [
+            "Thank you for bringing this issue to our attention.",
             "We sincerely apologize for the inconvenience you've experienced with our product.",
-            "We understand your frustration and take full responsibility for this issue.",
-            "Our team is investigating the matter to identify what went wrong.",
-            "We'll implement measures to ensure this doesn't happen again in the future.",
-            "As compensation, we'd like to offer you a refund or replacement at your convenience."
+            "Our team has investigated the matter and identified the root cause.",
+            "As compensation, we'd like to offer you a full refund and a discount on your next purchase.",
+            "Please let us know if this resolution is satisfactory or if you have any questions."
         ],
-        correctOrder: [1, 0, 2, 3, 4]
+        "correctOrder": [0, 1, 2, 3, 4]
     },
     {
-        id: 4,
-        title: "Situation 4: Giving Feedback to a Team Member",
-        sentences: [
-            "I've noticed your consistent effort and dedication on our recent project.",
-            "Your contribution in the client presentation was particularly impressive.",
-            "One area where you might consider developing further is time management.",
-            "Setting clearer priorities could help you deliver even better results.",
-            "I'm here to support your growth and would be happy to discuss strategies."
+        "id": 5,
+        "title": "Situation 5: Following Up After a Job Interview",
+        "sentences": [
+            "I wanted to thank you for the opportunity to interview for the Marketing Manager position.",
+            "I enjoyed our conversation about the company's growth strategy and vision.",
+            "After our discussion, I'm even more enthusiastic about potentially joining your team.",
+            "I'd be happy to provide any additional information that might help with your decision.",
+            "I look forward to hearing from you regarding the next steps in the process."
         ],
-        correctOrder: [0, 1, 2, 3, 4]
+        "correctOrder": [0, 1, 2, 3, 4]
     },
     {
-        id: 5,
-        title: "Situation 5: Writing a Project Update",
-        sentences: [
-            "We've completed phase one of the project according to our timeline.",
-            "Several key milestones were achieved, including the database migration.",
-            "We did encounter some challenges with the user interface implementation.",
-            "Our team has developed solutions to address these obstacles effectively.",
-            "We remain on track to deliver the final product by the expected deadline."
+        "id": 6,
+        "title": "Situation 6: Submitting a Budget Request",
+        "sentences": [
+            "I've attached the proposed budget for the upcoming quarter for your review.",
+            "The budget includes a 15% increase in our marketing allocation based on projected growth.",
+            "We've also reduced operational expenses by implementing new automation tools.",
+            "These changes should allow us to meet our revenue targets while controlling costs.",
+            "Please let me know if you have any questions or require further justification."
         ],
-        correctOrder: [0, 1, 2, 3, 4]
+        "correctOrder": [0, 1, 2, 3, 4]
     },
     {
-        id: 6,
-        title: "Situation 6: Introducing a New Policy",
-        sentences: [
-            "Our organization is committed to improving workplace efficiency and satisfaction.",
-            "After careful consideration, we're implementing a flexible working hours policy.",
-            "Starting next month, employees can choose to work between 7 AM and 7 PM.",
-            "Core hours from 10 AM to 3 PM will remain mandatory for all team members.",
-            "We believe this change will enhance productivity while supporting work-life balance."
+        "id": 7,
+        "title": "Situation 7: Requesting Feedback on a Proposal",
+        "sentences": [
+            "I've prepared a proposal for the new client onboarding process as discussed.",
+            "The document outlines key improvements to streamline the experience for new customers.",
+            "I'd appreciate your thoughts on the suggested timeline and resource allocation.",
+            "Your perspective would be valuable before I present this to the management team.",
+            "Would you have time to review it before Friday's meeting?"
         ],
-        correctOrder: [0, 1, 2, 3, 4]
+        "correctOrder": [0, 1, 2, 3, 4]
     },
     {
-        id: 7,
-        title: "Situation 7: Explaining a Technical Process",
-        sentences: [
-            "The first step in debugging this error involves checking your system configuration.",
-            "Next, you should verify that all required dependencies are properly installed.",
-            "Common issues often stem from outdated package versions or conflicting libraries.",
-            "Running our diagnostic tool can help identify the specific source of the problem.",
-            "Once identified, follow our documentation to implement the appropriate solution."
+        "id": 8,
+        "title": "Situation 8: Announcing a Policy Change",
+        "sentences": [
+            "After careful consideration, we're implementing changes to our remote work policy.",
+            "Starting next month, employees will be required to work from the office three days per week.",
+            "This decision aims to balance flexibility with the benefits of in-person collaboration.",
+            "We understand this represents a significant change from our current arrangements.",
+            "Department heads will schedule team meetings to address any questions or concerns."
         ],
-        correctOrder: [0, 1, 2, 3, 4]
+        "correctOrder": [0, 1, 2, 3, 4]
     },
     {
-        id: 8,
-        title: "Situation 8: Responding to a Job Application",
-        sentences: [
-            "Thank you for your interest in the Marketing Specialist position at our company.",
-            "We were impressed by your qualifications and experience in digital marketing.",
-            "After careful review, we would like to invite you for an interview next week.",
-            "Please let us know your availability between Monday and Wednesday.",
-            "We look forward to discussing your potential contributions to our team."
+        "id": 9,
+        "title": "Situation 9: Resolving a Misunderstanding",
+        "sentences": [
+            "I believe there's been a misunderstanding regarding yesterday's presentation.",
+            "My comments were intended as constructive feedback rather than criticism.",
+            "I've always valued your contributions and innovative approach to projects.",
+            "Perhaps we could discuss this in person to clear up any confusion.",
+            "Maintaining open communication is important for our continued collaboration."
         ],
-        correctOrder: [0, 1, 2, 3, 4]
+        "correctOrder": [0, 1, 2, 3, 4]
     },
     {
-        id: 9,
-        title: "Situation 9: Making a Product Recommendation",
-        sentences: [
-            "Based on your requirements, I believe our Premium Suite would be the best fit.",
-            "This package includes all the features you mentioned as priorities.",
-            "Additionally, it offers advanced analytics that your team would find valuable.",
-            "The cost is within your specified budget range with our current promotion.",
-            "I can arrange a demonstration to show you these capabilities in action."
+        "id": 10,
+        "title": "Situation 10: Requesting Time Off",
+        "sentences": [
+            "I'd like to request vacation time from July 10th through July 21st.",
+            "I've already completed the necessary paperwork and updated our shared calendar.",
+            "All my current projects will be completed before my departure.",
+            "I've also arranged for Sarah to handle any urgent matters during my absence.",
+            "Please let me know if you need any additional information or arrangements."
         ],
-        correctOrder: [0, 1, 2, 3, 4]
+        "correctOrder": [0, 1, 2, 3, 4]
     },
     {
-        id: 10,
-        title: "Situation 10: Explaining a Change in Plans",
-        sentences: [
-            "I regret to inform you that we need to reschedule our planned meeting.",
-            "An unexpected situation has arisen that requires immediate attention.",
-            "I apologize for any inconvenience this change may cause you.",
-            "I propose we move our discussion to next Tuesday at the same time.",
-            "Please let me know if this alternative works for your schedule."
+        "id": 11,
+        "title": "Situation 11: Responding to a Project Delay",
+        "sentences": [
+            "I've received your update about the project delay due to supplier issues.",
+            "While this is concerning, I understand these factors were beyond our control.",
+            "Let's schedule a call to discuss mitigation strategies and revised timelines.",
+            "In the meantime, please prepare an updated risk assessment for stakeholders.",
+            "I'm confident we can work together to minimize the impact on our deliverables."
         ],
-        correctOrder: [0, 1, 2, 3, 4]
+        "correctOrder": [0, 1, 2, 4, 3]
     },
     {
-        id: 11,
-        title: "Situation 11: Writing a Thank You Note",
-        sentences: [
-            "I wanted to express my sincere gratitude for your help with the project.",
-            "Your expertise and guidance were instrumental in overcoming key challenges.",
-            "The insights you shared will continue to benefit our team going forward.",
-            "It's truly appreciated how you went above and beyond your responsibilities.",
-            "I hope we'll have the opportunity to collaborate again in the future."
+        "id": 12,
+        "title": "Situation 12: Providing Technical Support",
+        "sentences": [
+            "I received your request about the issues with the database connection.",
+            "The problem appears to be related to recent server maintenance.",
+            "I've implemented a temporary fix that should restore functionality immediately.",
+            "Our team is working on a permanent solution to prevent future occurrences.",
+            "Please let me know if you encounter any further difficulties with the system."
         ],
-        correctOrder: [0, 1, 2, 3, 4]
+        "correctOrder": [0, 1, 2, 3, 4]
     },
     {
-        id: 12,
-        title: "Situation 12: Requesting Information",
-        sentences: [
-            "I'm writing regarding the upcoming conference that your organization is hosting.",
-            "Our team is interested in attending and would like some additional details.",
-            "Specifically, we're curious about registration deadlines and participation fees.",
-            "Also, could you provide information about accommodation options near the venue?",
-            "We appreciate your assistance and look forward to your response."
+        "id": 13,
+        "title": "Situation 13: Sharing Meeting Notes",
+        "sentences": [
+            "I'm attaching the notes from yesterday's strategic planning meeting.",
+            "We identified three key initiatives to focus on during the next quarter.",
+            "The document also includes assigned responsibilities and deadlines.",
+            "Please review the action items designated to your department by Monday.",
+            "Let me know if you have any questions or need clarification on any points."
         ],
-        correctOrder: [0, 1, 2, 3, 4]
+        "correctOrder": [0, 1, 2, 3, 4]
     },
     {
-        id: 13,
-        title: "Situation 13: Explaining a Delay",
-        sentences: [
-            "I'm writing to inform you about a delay in delivering our scheduled shipment.",
-            "Severe weather conditions have disrupted our transportation network.",
-            "Our logistics team is working diligently to minimize the impact of this situation.",
-            "We currently estimate that delivery will be completed by next Thursday.",
-            "We sincerely apologize for this inconvenience and appreciate your understanding."
+        "id": 14,
+        "title": "Situation 14: Discussing a Performance Issue",
+        "sentences": [
+            "I'd like to discuss some concerns regarding recent project deliverables.",
+            "I've noticed several deadlines have been missed over the past month.",
+            "I understand there might be challenges or obstacles I'm not aware of.",
+            "Could we schedule a one-on-one meeting to discuss this further?",
+            "My goal is to understand the situation and provide any support needed."
         ],
-        correctOrder: [0, 1, 2, 3, 4]
+        "correctOrder": [0, 1, 2, 3, 4]
     },
     {
-        id: 14,
-        title: "Situation 14: Proposing a Solution",
-        sentences: [
-            "I've analyzed the recurring issue with our customer notification system.",
-            "The root cause appears to be outdated database synchronization protocols.",
-            "Implementing a real-time data processing framework would resolve this problem.",
-            "This solution would require minimal downtime and provide long-term stability.",
-            "With your approval, we can begin implementation by the end of this week."
+        "id": 15,
+        "title": "Situation 15: Requesting a Recommendation Letter",
+        "sentences": [
+            "I hope this email finds you well.",
+            "I'm applying for a graduate program at University College London.",
+            "Given our professional relationship over the past three years, I wanted to ask if you would consider writing a recommendation letter for me.",
+            "The application deadline is March 15th, so I would need it by early March.",
+            "I understand if you're too busy, and appreciate your consideration either way."
         ],
-        correctOrder: [0, 1, 2, 3, 4]
+        "correctOrder": [0, 1, 2, 3, 4]
     },
     {
-        id: 15,
-        title: "Situation 15: Providing Instructions",
-        sentences: [
-            "To access your new account, first navigate to our company portal.",
-            "Click on the 'Account Activation' button at the top right corner.",
-            "Enter the verification code that was sent to your registered email.",
-            "Complete your profile by providing the requested information.",
-            "After submission, you'll receive confirmation and can begin using our services."
+        "id": 16,
+        "title": "Situation 16: Coordinating a Team Event",
+        "sentences": [
+            "I'm planning a team-building event for next month and would like your input.",
+            "The current options are a cooking class, escape room, or outdoor adventure day.",
+            "Please indicate your preference by responding to the attached survey.",
+            "We'll select the option with the most votes by the end of this week.",
+            "The event will take place on Friday, May 12th, from 1 PM onwards."
         ],
-        correctOrder: [0, 1, 2, 3, 4]
+        "correctOrder": [0, 1, 2, 3, 4]
     },
     {
-        id: 16,
-        title: "Situation 16: Making a Formal Announcement",
-        sentences: [
-            "We are pleased to announce the appointment of Sarah Chen as our new CEO.",
-            "Sarah brings over 20 years of industry experience and visionary leadership.",
-            "She will officially assume her responsibilities starting next month.",
-            "During this transition period, our current leadership team will provide support.",
-            "We're confident that under Sarah's guidance, our company will continue to thrive."
+        "id": 17,
+        "title": "Situation 17: Explaining a Technical Concept",
+        "sentences": [
+            "I wanted to follow up on your question about the new authentication system.",
+            "The system uses multi-factor authentication to enhance security protocols.",
+            "This means users will need to provide multiple forms of verification.",
+            "The implementation will be gradual, starting with the IT department next week.",
+            "We've prepared a brief tutorial that will be sent to all users before the change."
         ],
-        correctOrder: [0, 1, 2, 3, 4]
+        "correctOrder": [0, 1, 2, 3, 4]
     },
     {
-        id: 17,
-        title: "Situation 17: Requesting Feedback",
-        sentences: [
-            "We value your recent experience with our customer service department.",
-            "Your insights would be invaluable in helping us improve our service quality.",
-            "We'd appreciate if you could complete our brief satisfaction survey.",
-            "The survey should take no more than five minutes of your time.",
-            "As a token of appreciation, we'll enter you into our monthly gift card drawing."
+        "id": 18,
+        "title": "Situation 18: Requesting Equipment Repair",
+        "sentences": [
+            "I'm experiencing issues with my company laptop that's affecting my productivity.",
+            "The system frequently freezes and sometimes shuts down unexpectedly.",
+            "I've already tried restarting and updating all software as suggested.",
+            "Would it be possible to have someone from IT examine it this week?",
+            "I'm available any afternoon except Wednesday for troubleshooting."
         ],
-        correctOrder: [0, 1, 2, 3, 4]
+        "correctOrder": [0, 1, 2, 3, 4]
     },
     {
-        id: 18,
-        title: "Situation 18: Responding to an Inquiry",
-        sentences: [
-            "Thank you for your interest in our graduate program in Computer Science.",
-            "Regarding your question about admission requirements, we require a bachelor's degree.",
-            "Applicants should also have a minimum GPA of 3.0 and GRE scores above 310.",
-            "Additionally, we look for relevant work experience or research in the field.",
-            "I've attached our detailed brochure with complete information for your reference."
+        "id": 19,
+        "title": "Situation 19: Responding to a Project Proposal",
+        "sentences": [
+            "Thank you for submitting your detailed proposal for the client website redesign.",
+            "Your creativity and attention to user experience principles were particularly impressive.",
+            "I do have some questions regarding the timeline and resource allocation.",
+            "The projected completion date seems ambitious given our other commitments.",
+            "Can we schedule a call tomorrow to discuss potential adjustments?"
         ],
-        correctOrder: [0, 1, 2, 3, 4]
+        "correctOrder": [0, 1, 2, 3, 4]
     },
     {
-        id: 19,
-        title: "Situation 19: Writing a Progress Report",
-        sentences: [
-            "I'm pleased to report significant progress on the website redesign project.",
-            "The UX team has completed user research and finalized the navigation structure.",
-            "Our designers have created mockups for key pages that await your review.",
-            "The development team has begun building the framework for the new site.",
-            "We remain on schedule to launch the redesigned website next quarter."
+        "id": 20,
+        "title": "Situation 20: Handling a Missed Deadline",
+        "sentences": [
+            "I want to address the fact that we missed yesterday's deadline for the quarterly report.",
+            "I take full responsibility for not managing our time and resources effectively.",
+            "Several unexpected technical issues arose that significantly impacted our progress.",
+            "I've already spoken with the stakeholders to explain the situation and set new expectations.",
+            "We now have a revised plan to deliver the complete report by the end of this week."
         ],
-        correctOrder: [0, 1, 2, 3, 4]
-    },
-    {
-        id: 20,
-        title: "Situation 20: Explaining a New Feature",
-        sentences: [
-            "We're excited to introduce our new automated backup feature.",
-            "This functionality ensures your data is securely saved every 30 minutes.",
-            "You can access previous versions of your work from the 'History' tab.",
-            "Backups are encrypted and stored in our cloud for 90 days.",
-            "To enable this feature, simply toggle the 'Auto-Backup' switch in settings."
-        ],
-        correctOrder: [0, 1, 2, 3, 4]
+        "correctOrder": [0, 1, 2, 3, 4]
     }
 ];
         
