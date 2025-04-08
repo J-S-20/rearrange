@@ -968,6 +968,313 @@ function updateProgressIndicator() {
     resultsStep.textContent = 'Results';
     progressIndicator.appendChild(resultsStep);
 }
+
+// Leaderboard functionality
+function createLeaderboard() {
+    // Create leaderboard container if it doesn't exist
+    if (!document.getElementById('leaderboard-container')) {
+        const leaderboardContainer = document.createElement('div');
+        leaderboardContainer.id = 'leaderboard-container';
+        leaderboardContainer.className = 'hidden';
+        leaderboardContainer.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            max-width: 800px;
+            max-height: 80vh;
+            background-color: #fff;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            border-radius: 8px;
+            padding: 20px;
+            z-index: 1000;
+            overflow-y: auto;
+        `;
+        
+        // Create leaderboard header
+        const leaderboardHeader = document.createElement('div');
+        leaderboardHeader.innerHTML = `
+            <h2 style="color: #333; margin-bottom: 20px; text-align: center;">Leaderboard</h2>
+            <button id="close-leaderboard" style="position: absolute; top: 10px; right: 10px; background: none; border: none; font-size: 24px; cursor: pointer; color: #333;">×</button>
+        `;
+        leaderboardContainer.appendChild(leaderboardHeader);
+        
+        // Create leaderboard content
+        const leaderboardContent = document.createElement('div');
+        leaderboardContent.id = 'leaderboard-content';
+        leaderboardContainer.appendChild(leaderboardContent);
+        
+        // Add overlay
+        const overlay = document.createElement('div');
+        overlay.id = 'leaderboard-overlay';
+        overlay.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 999;
+            display: none;
+        `;
+        
+        // Add to document
+        document.body.appendChild(overlay);
+        document.body.appendChild(leaderboardContainer);
+        
+        // Event listener for close button
+        document.getElementById('close-leaderboard').addEventListener('click', () => {
+            hideLeaderboard();
+        });
+        
+        // Event listener for overlay
+        overlay.addEventListener('click', () => {
+            hideLeaderboard();
+        });
+    }
+}
+
+// Add leaderboard button to the results section
+function addLeaderboardButton() {
+    // First check if button already exists
+    if (!document.getElementById('view-leaderboard-btn')) {
+        const resultsSection = document.getElementById('results-section');
+        
+        // If results section exists, add button there
+        if (resultsSection) {
+            const leaderboardBtn = document.createElement('button');
+            leaderboardBtn.id = 'view-leaderboard-btn';
+            leaderboardBtn.textContent = 'View Leaderboard';
+            leaderboardBtn.className = 'btn';
+            leaderboardBtn.style.cssText = `
+                background-color: #4CAF50;
+                color: white;
+                padding: 10px 20px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 16px;
+                margin-top: 20px;
+                float: right;
+            `;
+            
+            leaderboardBtn.addEventListener('click', () => {
+                promptPassword();
+            });
+            
+            // Add button to results section
+            resultsSection.appendChild(leaderboardBtn);
+        } else {
+            // As a fallback, add fixed button
+            const leaderboardBtn = document.createElement('button');
+            leaderboardBtn.id = 'view-leaderboard-btn';
+            leaderboardBtn.textContent = 'View Leaderboard';
+            leaderboardBtn.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                padding: 10px 20px;
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 16px;
+                z-index: 900;
+            `;
+            
+            leaderboardBtn.addEventListener('click', () => {
+                promptPassword();
+            });
+            
+            document.body.appendChild(leaderboardBtn);
+        }
+    }
+}
+
+// Password prompt
+function promptPassword() {
+    const password = prompt('Enter password to view leaderboard:');
+    if (password === 'grammargenius') {
+        loadLeaderboard();
+    } else if (password !== null) {
+        alert('Incorrect password');
+    }
+}
+
+// Create and populate leaderboard table
+function createLeaderboardTable(studentsData) {
+    const leaderboardContent = document.getElementById('leaderboard-content');
+    
+    // Create table
+    const table = document.createElement('table');
+    table.style.cssText = `
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    `;
+    
+    // Add table header
+    const thead = document.createElement('thead');
+    thead.innerHTML = `
+        <tr>
+            <th style="border: 1px solid #ddd; padding: 12px; text-align: left; background-color: #6a5acd; color: white;">Rank</th>
+            <th style="border: 1px solid #ddd; padding: 12px; text-align: left; background-color: #6a5acd; color: white;">Name</th>
+            <th style="border: 1px solid #ddd; padding: 12px; text-align: left; background-color: #6a5acd; color: white;">Roll Number</th>
+            <th style="border: 1px solid #ddd; padding: 12px; text-align: left; background-color: #6a5acd; color: white;">Department</th>
+            <th style="border: 1px solid #ddd; padding: 12px; text-align: left; background-color: #6a5acd; color: white;">Score</th>
+            <th style="border: 1px solid #ddd; padding: 12px; text-align: left; background-color: #6a5acd; color: white;">Time Taken</th>
+            <th style="border: 1px solid #ddd; padding: 12px; text-align: left; background-color: #6a5acd; color: white;">Date</th>
+        </tr>
+    `;
+    table.appendChild(thead);
+    
+    // Add table body
+    const tbody = document.createElement('tbody');
+    
+    if (studentsData.length === 0) {
+        const emptyRow = document.createElement('tr');
+        emptyRow.innerHTML = `
+            <td colspan="7" style="border: 1px solid #ddd; padding: 12px; text-align: center;">No data available</td>
+        `;
+        tbody.appendChild(emptyRow);
+    } else {
+        // Add rows with student data
+        studentsData.forEach((student, index) => {
+            const row = document.createElement('tr');
+            row.style.backgroundColor = index % 2 === 0 ? '#f9f9f9' : '#ffffff';
+            
+            // Format time
+            const minutes = Math.floor(student.timeTaken / 60);
+            const seconds = student.timeTaken % 60;
+            const formattedTime = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            
+            // Format date
+            let formattedDate;
+            try {
+                formattedDate = new Date(student.completedAt).toLocaleDateString() + ' ' + 
+                                new Date(student.completedAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            } catch (e) {
+                formattedDate = 'N/A';
+            }
+            
+            row.innerHTML = `
+                <td style="border: 1px solid #ddd; padding: 12px;">${index + 1}</td>
+                <td style="border: 1px solid #ddd; padding: 12px;">${student.name || 'N/A'}</td>
+                <td style="border: 1px solid #ddd; padding: 12px;">${student.roll || 'N/A'}</td>
+                <td style="border: 1px solid #ddd; padding: 12px;">${student.department || 'N/A'}</td>
+                <td style="border: 1px solid #ddd; padding: 12px;">${student.score || 0}%</td>
+                <td style="border: 1px solid #ddd; padding: 12px;">${formattedTime}</td>
+                <td style="border: 1px solid #ddd; padding: 12px;">${formattedDate}</td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+    
+    table.appendChild(tbody);
+    leaderboardContent.innerHTML = '';
+    leaderboardContent.appendChild(table);
+}
+
+// Load leaderboard data
+async function loadLeaderboard() {
+    try {
+        // Show leaderboard with loading message
+        document.getElementById('leaderboard-overlay').style.display = 'block';
+        document.getElementById('leaderboard-container').classList.remove('hidden');
+        
+        const leaderboardContent = document.getElementById('leaderboard-content');
+        leaderboardContent.innerHTML = '<p style="text-align: center; margin: 20px 0;">Loading leaderboard data...</p>';
+        
+        // Fetch data from Firebase
+        const studentsSnapshot = await db.collection("students").get();
+        const studentsData = [];
+        
+        studentsSnapshot.forEach(doc => {
+            const data = doc.data();
+            studentsData.push({
+                name: data.name,
+                roll: data.roll,
+                department: data.department,
+                score: data.overallScore,
+                timeTaken: data.totalTimeTaken,
+                completedAt: data.completedAt ? data.completedAt : 
+                            (data.completionTime ? data.completionTime.toDate().toISOString() : new Date().toISOString())
+            });
+        });
+        
+        // Sort by score (higher is better) and then by time (lower is better)
+        studentsData.sort((a, b) => {
+            if (b.score !== a.score) {
+                return b.score - a.score; // Higher score first
+            }
+            return a.timeTaken - b.timeTaken; // Lower time first
+        });
+        
+        // Create and populate table
+        createLeaderboardTable(studentsData);
+        
+    } catch (error) {
+        console.error("Error loading leaderboard:", error);
+        const leaderboardContent = document.getElementById('leaderboard-content');
+        leaderboardContent.innerHTML = `
+            <p style="text-align: center; color: red; margin: 20px 0;">
+                Error loading leaderboard data. Please try again.<br>
+                Error details: ${error.message}
+            </p>
+        `;
+    }
+}
+
+// Hide leaderboard
+function hideLeaderboard() {
+    document.getElementById('leaderboard-container').classList.add('hidden');
+    document.getElementById('leaderboard-overlay').style.display = 'none';
+}
+
+// Initialize leaderboard components
+function initLeaderboard() {
+    // Create leaderboard elements
+    createLeaderboard();
+    
+    // Check if we're on the results page and add button
+    const resultsSection = document.getElementById('results-section');
+    if (resultsSection && !resultsSection.classList.contains('hidden')) {
+        addLeaderboardButton();
+    } else {
+        // Add event listener to check when results are shown
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.target.id === 'results-section' && 
+                    !mutation.target.classList.contains('hidden')) {
+                    addLeaderboardButton();
+                }
+            });
+        });
+        
+        // Start observing
+        if (resultsSection) {
+            observer.observe(resultsSection, { attributes: true });
+        }
+        
+        // Add button anyway as fallback
+        setTimeout(addLeaderboardButton, 2000);
+    }
+}
+
+// Initialize when page is fully loaded
+document.addEventListener('DOMContentLoaded', initLeaderboard);
+
+// Also add a direct button (in case the initialization timing is off)
+window.addEventListener('load', () => {
+    // If button doesn't exist after 3 seconds, add it
+    setTimeout(() => {
+        if (!document.getElementById('view-leaderboard-btn')) {
+            addLeaderboardButton();
+        }
+    }, 3000);
+});
     </script>
 </body>
 </html>
