@@ -756,16 +756,16 @@ function showResults() {
         const sentenceScore = Math.floor((result.userOrder.filter((val, idx) => 
             val === result.correctOrder[idx]).length / result.userOrder.length) * 80);
         
-        resultsHTML += `
-            <div style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #eee;">
-                <h4>${result.situationTitle}</h4>
-                <p>Sentence Order: ${sentenceScore}/80 points</p>
-                <p>Salutation: ${result.salutation.isCorrect ? '20/20' : '0/20'} points</p>
-                <p>Your answer: ${result.salutation.userPrefix} ${result.salutation.userPosition}</p>
-                <p>Correct position: ${result.salutation.correctPosition}</p>
-                <p><strong>Total: ${result.score}/100 points</strong></p>
-            </div>
-        `;
+            resultsHTML += `
+    <div style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #eee;">
+        <h4>${result.situationTitle}</h4>
+        <p>Sentence Order: ${sentenceScore}/80 points</p>
+        <p>Salutation: ${result.salutation.isCorrect ? '20/20' : '0/20'} points</p>
+        <p>Your answer: ${result.salutation.userFullSalutation}</p>
+        <p>Expected: ${result.salutation.correctPrefix} ${result.salutation.correctPosition}</p>
+        <p><strong>Total: ${result.score}/100 points</strong></p>
+    </div>
+`;
     });
     
     detailedResults.innerHTML = resultsHTML;
@@ -871,13 +871,10 @@ async function handleRegistration(e) {
     const salutationForm = document.createElement("div");
 salutationForm.className = "salutation-form form-group";
 salutationForm.innerHTML = `
-    <label for="salutation-input">Enter the appropriate salutation position:</label>
+    <label for="salutation-input">Enter the appropriate salutation:</label>
     <div class="salutation-container">
-        <input type="hidden" id="salutation-prefix" value="Dear">
-        <span style="margin-right: 10px; font-weight: 500;">Dear</span>
-        <input type="text" id="salutation-position" class="form-control" style="width: 85%; display: inline-block;" placeholder="Enter the position (e.g., Manager, Director)" required>
+        <input type="text" id="salutation-full" class="form-control" style="width: 100%; display: inline-block;" placeholder="Type appropriate salutation" required>
     </div>
-    <p class="hint" style="font-size: 0.85rem; margin-top: 5px; color: #666;">Hint: Enter the appropriate position for this email situation.</p>
 `;
     
     // Clear sentence list and add salutation form
@@ -994,36 +991,40 @@ salutationForm.innerHTML = `
     }
     
     // Check salutation
-    let salutationScore = 0;
-    const salutationPrefix = "Dear";
-    const userPosition = document.getElementById("salutation-position").value.trim().toLowerCase();
-    const correctPosition = situations[currentSituation].salutation.position.toLowerCase();
-    
-    // Check if the user's position matches or contains the correct position keywords
-    if (userPosition === correctPosition || 
-        userPosition.includes(correctPosition) || 
-        correctPosition.includes(userPosition)) {
-        salutationScore = 1;
-    }
+    // Check salutation
+let salutationScore = 0;
+const userFullSalutation = document.getElementById("salutation-full").value.trim().toLowerCase();
+const correctPrefix = situations[currentSituation].salutation.options[0].toLowerCase(); // Usually "Dear"
+const correctPosition = situations[currentSituation].salutation.position.toLowerCase();
+
+// Check if salutation contains both correct prefix and position
+const hasCorrectPrefix = situations[currentSituation].salutation.options.some(prefix => 
+    userFullSalutation.includes(prefix.toLowerCase()));
+const hasCorrectPosition = userFullSalutation.includes(correctPosition) || 
+                           correctPosition.includes(userFullSalutation.replace(correctPrefix, "").trim());
+
+if (hasCorrectPrefix && hasCorrectPosition) {
+    salutationScore = 1;
+}
     
     // Calculate total score - sentence order (80%) + salutation (20%)
     score = Math.floor((correctCount / userOrder.length) * 80) + (salutationScore * 20);
     
     // Save result for current situation
-    currentStudent.situationResults.push({
-        situation: situations[currentSituation].id,
-        situationTitle: situations[currentSituation].title,
-        score: score,
-        timeTaken: 90 - timeRemaining,
-        userOrder: userOrder,
-        correctOrder: correctOrder,
-        salutation: {
-            userPrefix: salutationPrefix,
-            userPosition: userPosition,
-            correctPosition: situations[currentSituation].salutation.position,
-            isCorrect: salutationScore === 1
-        }
-    });
+currentStudent.situationResults.push({
+    situation: situations[currentSituation].id,
+    situationTitle: situations[currentSituation].title,
+    score: score,
+    timeTaken: 90 - timeRemaining,
+    userOrder: userOrder,
+    correctOrder: correctOrder,
+    salutation: {
+        userFullSalutation: userFullSalutation,
+        correctPrefix: situations[currentSituation].salutation.options[0],
+        correctPosition: situations[currentSituation].salutation.position,
+        isCorrect: salutationScore === 1
+    }
+});
     
     // Update total time taken
     currentStudent.totalTimeTaken += (90 - timeRemaining);
