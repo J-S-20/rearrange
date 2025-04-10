@@ -428,7 +428,7 @@
         "correctOrder": [0, 1, 2, 3, 4],
         "salutation": {
             "position": "Hiring Manager",
-            "options": ["Dear", "Hello", "Good day"]
+            "options": ["Dear", "Hello"]
         }
     },
     {
@@ -444,7 +444,7 @@
         "correctOrder": [0, 1, 2, 3, 4],
         "salutation": {
             "position": "Finance Director",
-            "options": ["Dear", "Respected", "Hello"]
+            "options": ["Dear", "Respected"]
         }
     },
     {
@@ -460,7 +460,7 @@
         "correctOrder": [0, 1, 2, 3, 4],
         "salutation": {
             "position": "Team Leader",
-            "options": ["Dear", "Hi", "Hello"]
+            "options": ["Dear", "Hello"]
         }
     },
     {
@@ -869,17 +869,16 @@ async function handleRegistration(e) {
     
     // Add salutation form
     const salutationForm = document.createElement("div");
-    salutationForm.className = "salutation-form form-group";
-    salutationForm.innerHTML = `
-        <label for="salutation-input">Enter the appropriate salutation:</label>
-        <div class="salutation-container">
-            <select id="salutation-prefix" class="form-control" style="width: 30%; display: inline-block; margin-right: 10px;">
-                ${situations[index].salutation.options.map(option => `<option value="${option}">${option}</option>`).join('')}
-            </select>
-            <input type="text" id="salutation-position" class="form-control" style="width: 65%; display: inline-block;" placeholder="Enter the position (e.g., Manager, Director)" required>
-        </div>
-        <p class="hint" style="font-size: 0.85rem; margin-top: 5px; color: #666;">Hint: Choose the appropriate form of address for this email situation.</p>
-    `;
+salutationForm.className = "salutation-form form-group";
+salutationForm.innerHTML = `
+    <label for="salutation-input">Enter the appropriate salutation position:</label>
+    <div class="salutation-container">
+        <input type="hidden" id="salutation-prefix" value="Dear">
+        <span style="margin-right: 10px; font-weight: 500;">Dear</span>
+        <input type="text" id="salutation-position" class="form-control" style="width: 85%; display: inline-block;" placeholder="Enter the position (e.g., Manager, Director)" required>
+    </div>
+    <p class="hint" style="font-size: 0.85rem; margin-top: 5px; color: #666;">Hint: Enter the appropriate position for this email situation.</p>
+`;
     
     // Clear sentence list and add salutation form
     sentenceList.innerHTML = "";
@@ -996,7 +995,7 @@ async function handleRegistration(e) {
     
     // Check salutation
     let salutationScore = 0;
-    const salutationPrefix = document.getElementById("salutation-prefix").value;
+    const salutationPrefix = "Dear";
     const userPosition = document.getElementById("salutation-position").value.trim().toLowerCase();
     const correctPosition = situations[currentSituation].salutation.position.toLowerCase();
     
